@@ -18,6 +18,12 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--output", "-o", default="runs/demo", help="Output directory.")
     run_parser.add_argument("--project-name", default="Demo API", help="Name shown in reports.")
     run_parser.add_argument("--source-name", default="requirements", help="Source name shown in analysis.")
+    run_parser.add_argument(
+        "--input-format",
+        choices=["auto", "text", "openapi"],
+        default="auto",
+        help="Input document type. Auto detects OpenAPI JSON when possible.",
+    )
     run_parser.add_argument("--no-execute", action="store_true", help="Only generate suite and pytest code.")
     run_parser.add_argument("--json", action="store_true", help="Print machine-readable result.")
 
@@ -45,6 +51,7 @@ def main() -> None:
         output_dir=Path(args.output),
         project_name=args.project_name,
         source_name=args.source_name,
+        input_format=args.input_format,
         execute=not args.no_execute,
     )
 

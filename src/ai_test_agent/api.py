@@ -7,7 +7,7 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
-from ai_test_agent.agents import RequirementAnalysisAgent, TestCaseDesignAgent
+from ai_test_agent.agents import TestCaseDesignAgent
 from ai_test_agent.models import AnalysisResult, GeneratedSuite, PipelineResult
 from ai_test_agent.pipeline import AITestAgentPipeline
 
@@ -25,6 +25,7 @@ class RequirementRequest(BaseModel):
     project_name: str = "Demo API"
     output_dir: str = "runs/api"
     execute: bool = True
+    input_format: str = Field(default="auto", pattern="^(auto|text|openapi)$")
 
 
 @app.get("/health")
@@ -35,7 +36,11 @@ def health() -> dict[str, str]:
 @app.post("/analyze", response_model=AnalysisResult)
 def analyze(request: RequirementRequest) -> AnalysisResult:
     try:
-        return RequirementAnalysisAgent().analyze(request.text, source_name=request.source_name)
+        return AITestAgentPipeline().analyze_input(
+            request.text,
+            source_name=request.source_name,
+            input_format=request.input_format,
+        )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
@@ -43,7 +48,11 @@ def analyze(request: RequirementRequest) -> AnalysisResult:
 @app.post("/generate", response_model=GeneratedSuite)
 def generate(request: RequirementRequest) -> GeneratedSuite:
     try:
-        analysis = RequirementAnalysisAgent().analyze(request.text, source_name=request.source_name)
+        analysis = AITestAgentPipeline().analyze_input(
+            request.text,
+            source_name=request.source_name,
+            input_format=request.input_format,
+        )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     cases = TestCaseDesignAgent().generate(analysis)
@@ -63,6 +72,7 @@ def run_pipeline(request: RequirementRequest) -> PipelineResult:
             output_dir=Path(request.output_dir),
             project_name=request.project_name,
             source_name=request.source_name,
+            input_format=request.input_format,
             execute=request.execute,
         )
     except ValueError as exc:

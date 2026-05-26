@@ -19,8 +19,8 @@ from ai_test_agent.models import (
 
 
 ENDPOINT_RE = re.compile(r"^\s*(?:#{1,6}\s*)?(GET|POST|PUT|PATCH|DELETE)\s+(/[^\s`#]+)", re.IGNORECASE)
-STATUS_RE = re.compile(r"(?:Success|成功|status|状态码)\s*[:：]\s*(\d{3})", re.IGNORECASE)
-KEYS_RE = re.compile(r"(?:Response Keys|响应字段|返回字段)\s*[:：]\s*([A-Za-z0-9_,\s-]+)", re.IGNORECASE)
+STATUS_RE = re.compile(r"(?:Success|status|status code)\s*[:=]\s*(\d{3})", re.IGNORECASE)
+KEYS_RE = re.compile(r"(?:Response Keys|response fields|return fields)\s*[:=]\s*([A-Za-z0-9_,\s-]+)", re.IGNORECASE)
 JSON_BLOCK_RE = re.compile(r"```(?:json)?\s*(\{.*?\})\s*```", re.IGNORECASE | re.DOTALL)
 
 
@@ -119,7 +119,7 @@ class RequirementAnalysisAgent:
                 )
             return points
 
-        sentences = [item.strip() for item in re.split(r"[。.!?\n]+", text) if item.strip()]
+        sentences = [item.strip() for item in re.split(r"[.!?\n]+", text) if item.strip()]
         for index, sentence in enumerate(sentences[:5], start=1):
             points.append(
                 TestPoint(
@@ -264,13 +264,15 @@ def render_suite_as_markdown(suite: GeneratedSuite) -> str:
     for point in suite.analysis.test_points:
         lines.append(f"| {point.id} | {point.feature} | {point.risk_level.value} | {point.description} |")
 
-    lines.extend([
-        "",
-        "## Test Cases",
-        "",
-        "| ID | Category | Priority | Request | Expected |",
-        "| --- | --- | --- | --- | --- |",
-    ])
+    lines.extend(
+        [
+            "",
+            "## Test Cases",
+            "",
+            "| ID | Category | Priority | Request | Expected |",
+            "| --- | --- | --- | --- | --- |",
+        ]
+    )
     for case in suite.test_cases:
         request = f"{case.method} {case.path}"
         lines.append(f"| {case.id} | {case.category.value} | {case.priority} | `{request}` | {case.expected_status} |")

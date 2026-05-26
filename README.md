@@ -1,7 +1,5 @@
 # AI Test Agent
 
-[![CI](https://github.com/your-name/ai-test-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/your-name/ai-test-agent/actions/workflows/ci.yml)
-
 AI Test Agent 是一个面向测试开发岗位的作品集项目：输入接口需求文档，系统自动分析测试点、生成测试用例、生成 `pytest` 代码、执行测试，并输出 Markdown/HTML 测试报告。
 
 这个项目不是普通聊天机器人，而是把测试思维、自动化测试和 Agent 工作流结合起来，适合用于展示测试开发、AI 应用测试、初级 Agent 开发能力。
@@ -11,6 +9,7 @@ AI Test Agent 是一个面向测试开发岗位的作品集项目：输入接口
 - 需求分析 Agent：从 Markdown/API 文档中提取接口、状态码、请求体、响应字段。
 - 用例生成 Agent：自动生成正向、异常、边界相关测试用例。
 - 代码生成 Agent：生成可运行的 `pytest` + `FastAPI TestClient` 测试代码。
+- OpenAPI 导入：支持从 Swagger/OpenAPI JSON 自动提取接口契约。
 - 执行分析：自动运行生成的测试，解析 JUnit XML 结果。
 - 报告输出：生成 `suite.json`、`report.md`、`report.html`。
 - 离线可运行：没有 API Key 时使用确定性规则引擎，保证 CI 和面试演示稳定。
@@ -50,6 +49,12 @@ Generate and execute tests:
 ai-test-agent run -i examples/sample_api_requirements.md -o runs/demo
 ```
 
+Generate from OpenAPI/Swagger JSON:
+
+```bash
+ai-test-agent run -i examples/sample_openapi.json -o runs/openapi --input-format openapi
+```
+
 Generate only, without execution:
 
 ```bash
@@ -76,6 +81,8 @@ Useful endpoints:
 - `POST /analyze`
 - `POST /generate`
 - `POST /run`
+
+Requests accept `input_format` with `auto`, `text`, or `openapi`.
 
 Example request:
 
@@ -120,7 +127,7 @@ The CI workflow in `.github/workflows/ci.yml` runs the same test suite on every 
 
 这个项目可以在简历中这样描述：
 
-> AI Test Agent：基于 Python/FastAPI/pytest 的接口测试智能助手，支持从接口需求文档自动提取测试点、生成结构化测试用例、生成并执行 pytest 自动化脚本，最终输出 Markdown/HTML 测试报告；项目包含 CLI、FastAPI 接口、GitHub Actions CI 和离线可运行的规则引擎。
+> AI Test Agent：基于 Python/FastAPI/pytest 的接口测试智能助手，支持从 Markdown 需求文档或 OpenAPI/Swagger JSON 自动提取测试点、生成结构化测试用例、生成并执行 pytest 自动化脚本，最终输出 Markdown/HTML 测试报告；项目包含 CLI、FastAPI 接口、GitHub Actions CI 和离线可运行的规则引擎。
 
 建议简历关键词：
 
@@ -128,6 +135,7 @@ The CI workflow in `.github/workflows/ci.yml` runs the same test suite on every 
 - FastAPI
 - pytest
 - API 自动化测试
+- OpenAPI/Swagger
 - 测试用例设计
 - Agent 工作流
 - LangChain/OpenAI-compatible LLM
@@ -135,7 +143,6 @@ The CI workflow in `.github/workflows/ci.yml` runs the same test suite on every 
 
 ## Roadmap
 
-- 支持 OpenAPI/Swagger JSON 直接导入。
 - 支持 Postman Collection 导入。
 - 增加 Web UI 展示生成过程。
 - 增加模型输出质量评测和提示词回归测试。

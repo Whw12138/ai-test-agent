@@ -10,6 +10,7 @@
 - 能用 Python 写自动化测试工具，而不只是执行测试。
 - 能生成和运行 `pytest` 测试代码。
 - 能把测试结果整理成报告。
+- 能导入 OpenAPI/Swagger JSON，比只支持手写 Markdown 更接近真实接口测试场景。
 - 能通过 CLI、FastAPI、CI 把项目包装成完整工程。
 
 ## Interview Talking Points
@@ -19,12 +20,13 @@
 3. 生成的测试不是静态文本，而是真正会被 `pytest` 执行。
 4. 通过 JUnit XML 解析执行结果，比只看控制台输出更工程化。
 5. 后续可以扩展到 OpenAPI、Postman、真实测试环境和 AI 测试评估。
+6. 已经支持 OpenAPI JSON 的基础导入，后续可继续扩展 `$ref`、鉴权、环境变量和真实 HTTP 执行。
 
 ## Resume Version
 
 项目：AI Test Agent：基于大模型思路的接口测试用例生成与自动执行系统
 
-描述：使用 Python、FastAPI、pytest 实现智能测试助手，支持输入 Markdown 接口需求文档，自动提取接口信息和测试点，生成正向/异常测试用例及可执行 pytest 脚本，并调用测试执行器生成 Markdown/HTML 报告。项目提供 CLI、FastAPI 接口、示例后端服务、单元/集成测试和 GitHub Actions CI，默认支持无 API Key 离线运行，并预留 OpenAI 兼容 LLM/LangChain 扩展。
+描述：使用 Python、FastAPI、pytest 实现智能测试助手，支持输入 Markdown 接口需求文档或 OpenAPI/Swagger JSON，自动提取接口信息和测试点，生成正向/异常测试用例及可执行 pytest 脚本，并调用测试执行器生成 Markdown/HTML 报告。项目提供 CLI、FastAPI 接口、示例后端服务、单元/集成测试和 GitHub Actions CI，默认支持无 API Key 离线运行，并预留 OpenAI 兼容 LLM/LangChain 扩展。
 
 ## Suggested Demo Flow
 

@@ -7,7 +7,8 @@ from pathlib import Path
 
 from ai_test_agent.agents import PytestCodeAgent, RequirementAnalysisAgent, TestCaseDesignAgent
 from ai_test_agent.config import settings
-from ai_test_agent.models import GeneratedSuite, PipelineResult
+from ai_test_agent.models import AnalysisResult, GeneratedSuite, PipelineResult
+from ai_test_agent.openapi import OpenAPIAnalysisAgent
 from ai_test_agent.reporting import ReportGenerator
 from ai_test_agent.runner import PytestRunner
 
@@ -35,6 +36,7 @@ class AITestAgentPipeline:
         source_name: str = "requirements",
         target_base_url: str | None = None,
         execute: bool = True,
+        input_format: str = "auto",
     ) -> PipelineResult:
         project_root = Path(__file__).resolve().parents[2]
         output = Path(output_dir) if output_dir is not None else settings.output_dir
@@ -42,7 +44,7 @@ class AITestAgentPipeline:
             output = project_root / output
         output.mkdir(parents=True, exist_ok=True)
 
-        analysis = self.analyzer.analyze(requirement_text, source_name=source_name)
+        analysis = self.analyze_input(requirement_text, source_name=source_name, input_format=input_format)
         cases = self.case_designer.generate(analysis)
         suite = GeneratedSuite(
             project_name=project_name,
@@ -62,7 +64,7 @@ class AITestAgentPipeline:
 
         execution = self.runner.run(test_file, project_root) if execute else None
         markdown_report = self.reporter.markdown(suite, execution)
-        html_report = self.reporter.html(markdown_report)
+        html_report = self.reporter.html(markdown_report, suite=suite, execution=execution)
 
         report_dir = output / "reports"
         report_dir.mkdir(parents=True, exist_ok=True)
@@ -78,3 +80,24 @@ class AITestAgentPipeline:
             html_report=str(html_path),
             execution=execution,
         )
+
+    def analyze_input(
+        self,
+        requirement_text: str,
+        source_name: str = "requirements",
+        input_format: str = "auto",
+    ) -> AnalysisResult:
+        normalized = input_format.lower()
+        if normalized not in {"auto", "text", "openapi"}:
+            raise ValueError("input_format must be one of: auto, text, openapi.")
+        if normalized == "openapi" or (normalized == "auto" and self._looks_like_openapi(requirement_text)):
+            return OpenAPIAnalysisAgent().analyze(requirement_text, source_name=source_name)
+        return self.analyzer.analyze(requirement_text, source_name=source_name)
+
+    @staticmethod
+    def _looks_like_openapi(requirement_text: str) -> bool:
+        try:
+            document = json.loads(requirement_text)
+        except json.JSONDecodeError:
+            return False
+        return isinstance(document, dict) and ("openapi" in document or "swagger" in document)

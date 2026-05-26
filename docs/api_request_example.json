@@ -3,5 +3,6 @@
   "source_name": "inline-demo",
   "project_name": "Demo API",
   "output_dir": "runs/api",
-  "execute": true
+  "execute": true,
+  "input_format": "auto"
 }
