@@ -57,6 +57,8 @@ http://127.0.0.1:8000/
 
 The Web UI can run Markdown requirements or OpenAPI JSON, display endpoints and generated test cases, and preview the generated HTML report.
 
+The interface uses a lightweight React + Babel browser runtime with React Bits-inspired pieces such as shiny title text, spotlight panels, and an interactive dot-field background. No Node build step is required.
+
 ## CLI Usage
 
 Generate and execute tests:

@@ -1,6 +1,6 @@
 """Browser UI for AI Test Agent."""
 
-WEB_UI_HTML = """<!doctype html>
+WEB_UI_HTML = r"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -8,164 +8,436 @@ WEB_UI_HTML = """<!doctype html>
   <title>AI Test Agent</title>
   <style>
     :root {
-      --bg: #f5f7fb;
-      --panel: #ffffff;
-      --ink: #172033;
-      --muted: #5f6b7a;
-      --line: #d9e0ea;
+      --paper: #f4f7f6;
+      --panel: rgba(255, 255, 255, 0.82);
+      --panel-solid: #ffffff;
+      --ink: #17211f;
+      --muted: #63716d;
+      --line: rgba(37, 52, 47, 0.14);
+      --aqua: #10b6a8;
       --blue: #2563eb;
-      --green: #15803d;
-      --red: #b91c1c;
-      --amber: #b45309;
+      --leaf: #19a463;
+      --amber: #b7791f;
+      --rose: #c2414b;
+      --violet: #7c3aed;
+      --shadow: 0 24px 70px rgba(32, 44, 40, 0.12);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      background: var(--bg);
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(16, 182, 168, 0.16), transparent 28%),
+        radial-gradient(circle at 84% 8%, rgba(124, 58, 237, 0.13), transparent 24%),
+        linear-gradient(135deg, #f8fbfa 0%, var(--paper) 52%, #eef4f2 100%);
       color: var(--ink);
-      font-family: Arial, sans-serif;
-      font-size: 14px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       letter-spacing: 0;
+      overflow-x: hidden;
     }
-    header {
-      height: 64px;
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+    button {
+      border: 0;
+      cursor: pointer;
+      min-height: 40px;
+    }
+    button:disabled {
+      opacity: 0.58;
+      cursor: wait;
+    }
+    .dot-field {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.72;
+    }
+    .app-shell {
+      position: relative;
+      z-index: 1;
+      width: min(1480px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 22px 0 34px;
+    }
+    .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      padding: 0 24px;
-      background: #ffffff;
-      border-bottom: 1px solid var(--line);
-    }
-    h1 { margin: 0; font-size: 20px; line-height: 1.2; }
-    h2 { margin: 0 0 12px; font-size: 15px; line-height: 1.3; }
-    p { margin: 0; color: var(--muted); line-height: 1.5; }
-    a { color: var(--blue); text-decoration: none; }
-    button, select, input, textarea {
-      font: inherit;
-    }
-    button {
-      border: 1px solid var(--line);
-      background: #ffffff;
-      color: var(--ink);
-      border-radius: 6px;
-      padding: 9px 12px;
-      cursor: pointer;
-      min-height: 38px;
-    }
-    button.primary {
-      border-color: var(--blue);
-      background: var(--blue);
-      color: #ffffff;
-      font-weight: 700;
-    }
-    button:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-    }
-    input, select, textarea {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: #ffffff;
-      color: var(--ink);
-      padding: 9px 10px;
-    }
-    textarea {
-      min-height: 420px;
-      resize: vertical;
-      font-family: Consolas, Monaco, monospace;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-    main {
-      display: grid;
-      grid-template-columns: minmax(360px, 0.9fr) minmax(480px, 1.1fr);
       gap: 18px;
-      padding: 18px;
-      max-width: 1440px;
-      margin: 0 auto;
+      margin-bottom: 18px;
     }
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 16px;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       min-width: 0;
     }
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-    .grid {
+    .mark {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 14px;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: #16231f;
+      color: #c9fff6;
+      font-weight: 800;
+      box-shadow: 0 14px 34px rgba(22, 35, 31, 0.24);
     }
-    .checkline {
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.1;
+    }
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .nav {
       display: flex;
-      gap: 8px;
       align-items: center;
-      min-height: 38px;
+      gap: 8px;
+      flex-wrap: wrap;
     }
-    .checkline input {
-      width: 16px;
-      height: 16px;
-    }
-    .status {
+    .nav a, .ghost-button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 86px;
-      min-height: 32px;
-      border-radius: 6px;
-      padding: 6px 10px;
-      background: #eef2f7;
-      color: var(--muted);
-      font-weight: 700;
+      gap: 8px;
+      min-height: 38px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.72);
+      color: #263833;
+      font-size: 13px;
+      backdrop-filter: blur(16px);
     }
-    .status.pass { background: #dcfce7; color: var(--green); }
-    .status.fail { background: #fee2e2; color: var(--red); }
-    .status.work { background: #fef3c7; color: var(--amber); }
-    .metrics {
+    .hero {
       display: grid;
-      grid-template-columns: repeat(5, minmax(92px, 1fr));
+      grid-template-columns: minmax(0, 1.08fr) minmax(330px, 0.72fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    .hero-main {
+      min-height: 228px;
+      padding: 26px;
+      border: 1px solid rgba(255,255,255,0.72);
+      border-radius: 24px;
+      background:
+        linear-gradient(120deg, rgba(255,255,255,0.9), rgba(255,255,255,0.66)),
+        linear-gradient(135deg, rgba(16,182,168,0.16), rgba(37,99,235,0.08));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(24px);
+      overflow: hidden;
+      position: relative;
+    }
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      right: -160px;
+      top: -180px;
+      background:
+        conic-gradient(from 130deg, rgba(16,182,168,0), rgba(16,182,168,0.25), rgba(124,58,237,0.20), rgba(16,182,168,0));
+      filter: blur(22px);
+      opacity: 0.72;
+    }
+    .kicker {
+      margin: 0 0 12px;
+      color: var(--aqua);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .hero-title {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0;
+      font-size: clamp(32px, 5vw, 64px);
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+    .shiny-text {
+      color: transparent;
+      background:
+        linear-gradient(110deg, #10201c 0%, #10201c 34%, #ffffff 46%, #10b6a8 50%, #10201c 66%, #10201c 100%);
+      background-size: 280% 100%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      animation: shine 4.2s linear infinite;
+    }
+    @keyframes shine {
+      0% { background-position: 140% 0; }
+      100% { background-position: -140% 0; }
+    }
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+      margin: 18px 0 0;
+      max-width: 720px;
+      color: #52625e;
+      font-size: 15px;
+      line-height: 1.75;
+    }
+    .hero-actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
       gap: 10px;
-      margin: 14px 0;
+      margin-top: 22px;
+    }
+    .primary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 16px;
+      border-radius: 12px;
+      background: #10201c;
+      color: #ffffff;
+      font-weight: 800;
+      box-shadow: 0 14px 30px rgba(16, 32, 28, 0.24);
+    }
+    .spotlight {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.78);
+      border-radius: 22px;
+      background:
+        radial-gradient(360px circle at var(--x, 50%) var(--y, 50%), rgba(16,182,168,0.22), transparent 42%),
+        rgba(255,255,255,0.76);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px);
+    }
+    .insight-panel {
+      padding: 20px;
+      display: grid;
+      align-content: space-between;
+      gap: 18px;
+      min-height: 228px;
+    }
+    .insight-panel h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+    .insight-panel p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .signal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+    }
+    .signal {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(37,52,47,0.08);
+    }
+    .signal strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1;
+    }
+    .signal span {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(420px, 0.94fr) minmax(520px, 1.06fr);
+      gap: 18px;
+      align-items: start;
+    }
+    .panel {
+      border: 1px solid rgba(255,255,255,0.72);
+      border-radius: 24px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px);
+      min-width: 0;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 18px 12px;
+      border-bottom: 1px solid rgba(37, 52, 47, 0.1);
+    }
+    .panel-header h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+    .panel-header p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .panel-body {
+      padding: 18px;
+    }
+    .control-row {
+      display: grid;
+      grid-template-columns: 1fr 150px 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid rgba(37, 52, 47, 0.14);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.86);
+      color: var(--ink);
+      outline: none;
+    }
+    input, select {
+      min-height: 42px;
+      padding: 0 12px;
+    }
+    textarea {
+      min-height: 420px;
+      padding: 14px;
+      resize: vertical;
+      font-family: "JetBrains Mono", Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.62;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(16, 182, 168, 0.72);
+      box-shadow: 0 0 0 4px rgba(16, 182, 168, 0.12);
+    }
+    .tabs, .run-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      align-items: center;
+    }
+    .tabs {
+      margin-bottom: 12px;
+    }
+    .tab-button {
+      padding: 0 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(37, 52, 47, 0.12);
+      background: rgba(255,255,255,0.7);
+      color: #273a35;
+      font-size: 13px;
+    }
+    .tab-button.active {
+      background: #dffff8;
+      color: #075e55;
+      border-color: rgba(16,182,168,0.25);
+      font-weight: 800;
+    }
+    .run-row {
+      justify-content: space-between;
+      margin-top: 14px;
+    }
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: #40514c;
+      font-size: 13px;
+    }
+    .toggle input {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--aqua);
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 96px;
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: #eef2f0;
+      color: #566762;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+    }
+    .status-pill.pass { background: #daf8e9; color: #116b3f; }
+    .status-pill.fail { background: #fde2e2; color: #9f1d2c; }
+    .status-pill.work { background: #fff2cc; color: #8b5a08; }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
     }
     .metric {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 12px;
-      background: #ffffff;
+      min-height: 82px;
+      padding: 13px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(37,52,47,0.1);
     }
     .metric span {
       display: block;
       color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
     }
     .metric strong {
       display: block;
-      font-size: 22px;
-      line-height: 1.1;
+      margin-top: 10px;
+      font-size: 24px;
+      line-height: 1;
     }
-    .split {
+    .result-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .mini-panel {
+      min-width: 0;
+      border: 1px solid rgba(37,52,47,0.1);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.64);
+      overflow: hidden;
+    }
+    .mini-panel h3 {
+      margin: 0;
+      padding: 13px 14px;
+      border-bottom: 1px solid rgba(37,52,47,0.09);
+      font-size: 13px;
+    }
+    .empty {
+      display: grid;
+      place-items: center;
+      min-height: 180px;
+      padding: 20px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.5;
     }
     table {
       width: 100%;
@@ -173,148 +445,78 @@ WEB_UI_HTML = """<!doctype html>
       table-layout: fixed;
     }
     th, td {
-      border-bottom: 1px solid #edf0f5;
-      padding: 9px 8px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(37,52,47,0.08);
       text-align: left;
       vertical-align: top;
       overflow-wrap: anywhere;
+      font-size: 12px;
     }
     th {
       color: var(--muted);
-      font-size: 12px;
+      font-weight: 900;
       text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
-    iframe {
-      width: 100%;
-      height: 360px;
-      border: 1px solid var(--line);
+    .method {
+      display: inline-flex;
+      min-width: 48px;
+      justify-content: center;
       border-radius: 8px;
-      background: #ffffff;
+      padding: 4px 7px;
+      background: #e5f3ff;
+      color: #1d4ed8;
+      font-weight: 900;
     }
-    .report-actions {
+    .method.post {
+      background: #dcfce7;
+      color: #15803d;
+    }
+    .report-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      margin: 10px 0;
+      gap: 12px;
+      margin-bottom: 10px;
     }
-    .empty {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 220px;
-      border: 1px dashed var(--line);
-      border-radius: 8px;
-      color: var(--muted);
-      text-align: center;
-      padding: 18px;
+    .report-bar h3 {
+      margin: 0;
+      font-size: 14px;
+    }
+    iframe {
+      width: 100%;
+      height: 390px;
+      border: 1px solid rgba(37,52,47,0.13);
+      border-radius: 18px;
+      background: #ffffff;
     }
     .error {
-      color: var(--red);
+      margin: 12px 0 0;
+      color: var(--rose);
       white-space: pre-wrap;
+      line-height: 1.5;
     }
-    @media (max-width: 980px) {
-      main { grid-template-columns: 1fr; }
-      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .grid, .split { grid-template-columns: 1fr; }
-      textarea { min-height: 300px; }
+    @media (max-width: 1080px) {
+      .hero, .workspace { grid-template-columns: 1fr; }
+      .control-row, .result-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      .app-shell { width: min(100vw - 20px, 1480px); padding-top: 12px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .hero-main { padding: 20px; }
+      .metric-grid, .signal-grid { grid-template-columns: 1fr 1fr; }
+      textarea { min-height: 320px; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div>
-      <h1>AI Test Agent</h1>
-      <p>Requirement to test cases, pytest code, and execution report.</p>
-    </div>
-    <nav>
-      <a href="/docs">Swagger</a>
-    </nav>
-  </header>
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    const { useEffect, useRef, useState } = React;
 
-  <main>
-    <section class="panel">
-      <div class="toolbar">
-        <button id="sampleText">Markdown Sample</button>
-        <button id="sampleOpenApi">OpenAPI Sample</button>
-        <button id="clearInput">Clear</button>
-      </div>
-
-      <div class="grid">
-        <div>
-          <label for="projectName">Project</label>
-          <input id="projectName" value="Demo API">
-        </div>
-        <div>
-          <label for="inputFormat">Input Format</label>
-          <select id="inputFormat">
-            <option value="auto">Auto</option>
-            <option value="text">Text</option>
-            <option value="openapi">OpenAPI</option>
-          </select>
-        </div>
-        <div>
-          <label for="outputDir">Output</label>
-          <input id="outputDir" value="runs/web">
-        </div>
-      </div>
-
-      <label for="requirementText">Requirement</label>
-      <textarea id="requirementText"></textarea>
-
-      <div class="toolbar" style="margin-top: 14px; margin-bottom: 0;">
-        <button id="runButton" class="primary">Run Agent</button>
-        <span class="checkline"><input id="executeTests" type="checkbox" checked><span>Execute tests</span></span>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="report-actions">
-        <div>
-          <h2>Run Result</h2>
-          <p id="summary">Ready</p>
-        </div>
-        <span id="status" class="status">IDLE</span>
-      </div>
-
-      <div class="metrics">
-        <div class="metric"><span>Total</span><strong id="mTotal">0</strong></div>
-        <div class="metric"><span>Passed</span><strong id="mPassed">0</strong></div>
-        <div class="metric"><span>Failed</span><strong id="mFailed">0</strong></div>
-        <div class="metric"><span>Errors</span><strong id="mErrors">0</strong></div>
-        <div class="metric"><span>Duration</span><strong id="mDuration">-</strong></div>
-      </div>
-
-      <div class="split">
-        <div>
-          <h2>Endpoints</h2>
-          <div id="endpointsEmpty" class="empty">No result yet.</div>
-          <table id="endpointsTable" hidden>
-            <thead><tr><th>Method</th><th>Path</th><th>Status</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <div>
-          <h2>Test Cases</h2>
-          <div id="casesEmpty" class="empty">No result yet.</div>
-          <table id="casesTable" hidden>
-            <thead><tr><th>ID</th><th>Request</th><th>Expected</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="report-actions">
-        <h2>Report Preview</h2>
-        <a id="reportLink" href="#" target="_blank" hidden>Open report</a>
-      </div>
-      <div id="reportEmpty" class="empty">Run the agent to generate a report.</div>
-      <iframe id="reportFrame" title="Generated test report" hidden></iframe>
-      <p id="errorBox" class="error"></p>
-    </section>
-  </main>
-
-  <script>
     const markdownSample = `# Sample Shop API Requirements
 
 ## GET /health
@@ -325,9 +527,9 @@ Response Keys: status
 ## POST /login
 Description: Login with demo credentials and receive an access token.
 Request JSON:
-\\`\\`\\`json
+\`\`\`json
 {"username": "demo", "password": "secret"}
-\\`\\`\\`
+\`\`\`
 Success: 200
 Response Keys: token, user_id
 
@@ -339,9 +541,9 @@ Response Keys: items, total
 ## POST /orders
 Description: Create an order for an existing product.
 Request JSON:
-\\`\\`\\`json
+\`\`\`json
 {"product_id": 1, "quantity": 2}
-\\`\\`\\`
+\`\`\`
 Success: 201
 Response Keys: order_id, status
 `;
@@ -405,124 +607,343 @@ Response Keys: order_id, status
       }
     }, null, 2);
 
-    const $ = (id) => document.getElementById(id);
+    function DotField() {
+      const canvasRef = useRef(null);
 
-    function setStatus(label, kind) {
-      const status = $("status");
-      status.textContent = label;
-      status.className = "status" + (kind ? " " + kind : "");
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+        const pointer = { x: -9999, y: -9999 };
+        let width = 0;
+        let height = 0;
+        let raf = 0;
+        let dots = [];
+
+        const resize = () => {
+          width = canvas.width = window.innerWidth * window.devicePixelRatio;
+          height = canvas.height = window.innerHeight * window.devicePixelRatio;
+          canvas.style.width = window.innerWidth + "px";
+          canvas.style.height = window.innerHeight + "px";
+          const gap = 34 * window.devicePixelRatio;
+          dots = [];
+          for (let y = gap; y < height; y += gap) {
+            for (let x = gap; x < width; x += gap) {
+              dots.push({ x, y, base: 0.9 + Math.random() * 1.4 });
+            }
+          }
+        };
+
+        const move = (event) => {
+          pointer.x = event.clientX * window.devicePixelRatio;
+          pointer.y = event.clientY * window.devicePixelRatio;
+        };
+
+        const draw = () => {
+          ctx.clearRect(0, 0, width, height);
+          for (const dot of dots) {
+            const dx = dot.x - pointer.x;
+            const dy = dot.y - pointer.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const heat = Math.max(0, 1 - dist / (180 * window.devicePixelRatio));
+            ctx.beginPath();
+            ctx.arc(dot.x, dot.y, dot.base + heat * 2.4, 0, Math.PI * 2);
+            ctx.fillStyle = heat > 0 ? `rgba(16, 182, 168, ${0.12 + heat * 0.34})` : "rgba(23, 33, 31, 0.07)";
+            ctx.fill();
+          }
+          raf = requestAnimationFrame(draw);
+        };
+
+        resize();
+        draw();
+        window.addEventListener("resize", resize);
+        window.addEventListener("pointermove", move);
+        return () => {
+          cancelAnimationFrame(raf);
+          window.removeEventListener("resize", resize);
+          window.removeEventListener("pointermove", move);
+        };
+      }, []);
+
+      return <canvas ref={canvasRef} className="dot-field" aria-hidden="true" />;
     }
 
-    function resetTables() {
-      $("endpointsTable").hidden = true;
-      $("casesTable").hidden = true;
-      $("endpointsEmpty").hidden = false;
-      $("casesEmpty").hidden = false;
-      $("endpointsTable").querySelector("tbody").innerHTML = "";
-      $("casesTable").querySelector("tbody").innerHTML = "";
+    function ShinyText({ children }) {
+      return <span className="shiny-text">{children}</span>;
     }
 
-    function rows(tableId, emptyId, values, renderer) {
-      const table = $(tableId);
-      const body = table.querySelector("tbody");
-      body.innerHTML = values.map(renderer).join("");
-      table.hidden = values.length === 0;
-      $(emptyId).hidden = values.length !== 0;
+    function SpotlightCard({ className = "", children }) {
+      const ref = useRef(null);
+      const onMove = (event) => {
+        const rect = ref.current.getBoundingClientRect();
+        ref.current.style.setProperty("--x", `${event.clientX - rect.left}px`);
+        ref.current.style.setProperty("--y", `${event.clientY - rect.top}px`);
+      };
+      return (
+        <div ref={ref} className={`spotlight ${className}`} onMouseMove={onMove}>
+          {children}
+        </div>
+      );
     }
 
     function artifactUrl(path) {
-      const normalized = path.replaceAll("\\\\", "/");
+      const normalized = path.replaceAll("\\", "/");
       const marker = "/runs/";
       const index = normalized.indexOf(marker);
-      if (index >= 0) {
-        return normalized.slice(index);
-      }
-      if (normalized.startsWith("runs/")) {
-        return "/" + normalized;
-      }
+      if (index >= 0) return normalized.slice(index);
+      if (normalized.startsWith("runs/")) return "/" + normalized;
       return "";
     }
 
-    async function runAgent() {
-      $("errorBox").textContent = "";
-      $("runButton").disabled = true;
-      setStatus("RUNNING", "work");
-      $("summary").textContent = "Running pipeline";
-
-      try {
-        const response = await fetch("/run", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            text: $("requirementText").value,
-            source_name: "web-ui",
-            project_name: $("projectName").value || "Demo API",
-            output_dir: $("outputDir").value || "runs/web",
-            execute: $("executeTests").checked,
-            input_format: $("inputFormat").value
-          })
-        });
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.detail || "Request failed");
-        }
-
-        const execution = data.execution;
-        const statusKind = execution && execution.success ? "pass" : execution ? "fail" : "";
-        setStatus(execution ? (execution.success ? "PASS" : "FAIL") : "GENERATED", statusKind);
-        $("summary").textContent = data.suite.analysis.summary;
-        $("mTotal").textContent = execution ? execution.total : data.suite.test_cases.length;
-        $("mPassed").textContent = execution ? execution.passed : 0;
-        $("mFailed").textContent = execution ? execution.failed : 0;
-        $("mErrors").textContent = execution ? execution.errors : 0;
-        $("mDuration").textContent = execution ? execution.duration_seconds.toFixed(2) + "s" : "-";
-
-        rows("endpointsTable", "endpointsEmpty", data.suite.analysis.endpoints, (item) =>
-          `<tr><td>${item.method}</td><td>${item.path}</td><td>${item.success_status}</td></tr>`
-        );
-        rows("casesTable", "casesEmpty", data.suite.test_cases, (item) =>
-          `<tr><td>${item.id}</td><td>${item.method} ${item.path}</td><td>${item.expected_status}</td></tr>`
-        );
-
-        const url = artifactUrl(data.html_report);
-        if (url) {
-          const cacheBustUrl = url + "?t=" + Date.now();
-          $("reportFrame").src = cacheBustUrl;
-          $("reportFrame").hidden = false;
-          $("reportEmpty").hidden = true;
-          $("reportLink").href = cacheBustUrl;
-          $("reportLink").hidden = false;
-        }
-      } catch (error) {
-        setStatus("ERROR", "fail");
-        $("summary").textContent = "Run failed";
-        $("errorBox").textContent = error.message;
-      } finally {
-        $("runButton").disabled = false;
-      }
+    function Metric({ label, value }) {
+      return (
+        <div className="metric">
+          <span>{label}</span>
+          <strong>{value}</strong>
+        </div>
+      );
     }
 
-    $("sampleText").addEventListener("click", () => {
-      $("requirementText").value = markdownSample;
-      $("inputFormat").value = "text";
-    });
-    $("sampleOpenApi").addEventListener("click", () => {
-      $("requirementText").value = openApiSample;
-      $("inputFormat").value = "openapi";
-    });
-    $("clearInput").addEventListener("click", () => {
-      $("requirementText").value = "";
-      resetTables();
-      $("reportFrame").hidden = true;
-      $("reportEmpty").hidden = false;
-      $("reportLink").hidden = true;
-      $("summary").textContent = "Ready";
-      $("errorBox").textContent = "";
-      setStatus("IDLE", "");
-    });
-    $("runButton").addEventListener("click", runAgent);
+    function App() {
+      const [text, setText] = useState(markdownSample);
+      const [inputFormat, setInputFormat] = useState("text");
+      const [projectName, setProjectName] = useState("Demo API");
+      const [outputDir, setOutputDir] = useState("runs/web");
+      const [execute, setExecute] = useState(true);
+      const [result, setResult] = useState(null);
+      const [status, setStatus] = useState("IDLE");
+      const [error, setError] = useState("");
+      const [running, setRunning] = useState(false);
 
-    $("requirementText").value = markdownSample;
+      const execution = result?.execution;
+      const summary = result?.suite?.analysis?.summary || "Ready";
+      const reportUrl = result?.html_report ? artifactUrl(result.html_report) : "";
+      const reportPreview = reportUrl ? `${reportUrl}?t=${Date.now()}` : "";
+      const statusClass = status === "PASS" ? "pass" : status === "FAIL" || status === "ERROR" ? "fail" : status === "RUNNING" ? "work" : "";
+
+      const loadMarkdown = () => {
+        setText(markdownSample);
+        setInputFormat("text");
+      };
+
+      const loadOpenApi = () => {
+        setText(openApiSample);
+        setInputFormat("openapi");
+      };
+
+      const clearAll = () => {
+        setText("");
+        setResult(null);
+        setError("");
+        setStatus("IDLE");
+      };
+
+      const runAgent = async () => {
+        setError("");
+        setRunning(true);
+        setStatus("RUNNING");
+        try {
+          const response = await fetch("/run", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              text,
+              source_name: "web-ui",
+              project_name: projectName || "Demo API",
+              output_dir: outputDir || "runs/web",
+              execute,
+              input_format: inputFormat
+            })
+          });
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.detail || "Request failed");
+          }
+          setResult(data);
+          setStatus(data.execution ? (data.execution.success ? "PASS" : "FAIL") : "GENERATED");
+        } catch (err) {
+          setError(err.message);
+          setStatus("ERROR");
+        } finally {
+          setRunning(false);
+        }
+      };
+
+      const endpoints = result?.suite?.analysis?.endpoints || [];
+      const cases = result?.suite?.test_cases || [];
+
+      return (
+        <>
+          <DotField />
+          <div className="app-shell">
+            <header className="topbar">
+              <div className="brand">
+                <div className="mark">AT</div>
+                <div>
+                  <h1>AI Test Agent</h1>
+                  <p>Test development portfolio system</p>
+                </div>
+              </div>
+              <nav className="nav">
+                <a href="/docs">Swagger</a>
+                <a href="https://github.com/Whw12138/ai-test-agent" target="_blank" rel="noreferrer">GitHub</a>
+              </nav>
+            </header>
+
+            <section className="hero">
+              <div className="hero-main">
+                <p className="kicker">React Bits inspired interface</p>
+                <h2 className="hero-title">
+                  Turn requirements into <ShinyText>executable tests</ShinyText>.
+                </h2>
+                <p className="hero-copy">
+                  Paste Markdown requirements or OpenAPI JSON. The agent extracts API contracts,
+                  designs cases, generates pytest code, runs it, and previews the report in one place.
+                </p>
+                <div className="hero-actions">
+                  <button className="primary-button" onClick={runAgent} disabled={running}>
+                    {running ? "Running..." : "Run Agent"}
+                  </button>
+                  <button className="ghost-button" onClick={loadOpenApi}>Load OpenAPI</button>
+                </div>
+              </div>
+
+              <SpotlightCard className="insight-panel">
+                <div>
+                  <h2>What this UI shows</h2>
+                  <p>A portfolio-ready flow: input, generated contracts, generated tests, execution status, and the final report.</p>
+                </div>
+                <div className="signal-grid">
+                  <div className="signal"><strong>API</strong><span>Contract parse</span></div>
+                  <div className="signal"><strong>8+</strong><span>Auto cases</span></div>
+                  <div className="signal"><strong>CI</strong><span>pytest ready</span></div>
+                </div>
+              </SpotlightCard>
+            </section>
+
+            <section className="workspace">
+              <SpotlightCard className="panel">
+                <div className="panel-header">
+                  <div>
+                    <h2>Input Studio</h2>
+                    <p>Choose a sample or paste your own requirement document.</p>
+                  </div>
+                  <div className="tabs">
+                    <button className={`tab-button ${inputFormat === "text" ? "active" : ""}`} onClick={loadMarkdown}>Markdown</button>
+                    <button className={`tab-button ${inputFormat === "openapi" ? "active" : ""}`} onClick={loadOpenApi}>OpenAPI</button>
+                    <button className="tab-button" onClick={clearAll}>Clear</button>
+                  </div>
+                </div>
+                <div className="panel-body">
+                  <div className="control-row">
+                    <div>
+                      <label>Project</label>
+                      <input value={projectName} onChange={(e) => setProjectName(e.target.value)} />
+                    </div>
+                    <div>
+                      <label>Format</label>
+                      <select value={inputFormat} onChange={(e) => setInputFormat(e.target.value)}>
+                        <option value="auto">Auto</option>
+                        <option value="text">Text</option>
+                        <option value="openapi">OpenAPI</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label>Output</label>
+                      <input value={outputDir} onChange={(e) => setOutputDir(e.target.value)} />
+                    </div>
+                  </div>
+                  <label>Requirement</label>
+                  <textarea value={text} onChange={(e) => setText(e.target.value)} spellCheck="false" />
+                  <div className="run-row">
+                    <label className="toggle">
+                      <input type="checkbox" checked={execute} onChange={(e) => setExecute(e.target.checked)} />
+                      Execute generated pytest
+                    </label>
+                    <button className="primary-button" onClick={runAgent} disabled={running || text.trim().length === 0}>
+                      {running ? "Running..." : "Generate Report"}
+                    </button>
+                  </div>
+                </div>
+              </SpotlightCard>
+
+              <SpotlightCard className="panel">
+                <div className="panel-header">
+                  <div>
+                    <h2>Execution Console</h2>
+                    <p>{summary}</p>
+                  </div>
+                  <span className={`status-pill ${statusClass}`}>{status}</span>
+                </div>
+                <div className="panel-body">
+                  <div className="metric-grid">
+                    <Metric label="Total" value={execution ? execution.total : cases.length} />
+                    <Metric label="Passed" value={execution ? execution.passed : 0} />
+                    <Metric label="Failed" value={execution ? execution.failed : 0} />
+                    <Metric label="Errors" value={execution ? execution.errors : 0} />
+                    <Metric label="Duration" value={execution ? `${execution.duration_seconds.toFixed(2)}s` : "-"} />
+                  </div>
+
+                  <div className="result-grid">
+                    <div className="mini-panel">
+                      <h3>Endpoints</h3>
+                      {endpoints.length === 0 ? (
+                        <div className="empty">Run the agent to see parsed API contracts.</div>
+                      ) : (
+                        <table>
+                          <thead><tr><th>Method</th><th>Path</th><th>Status</th></tr></thead>
+                          <tbody>
+                            {endpoints.map((item, index) => (
+                              <tr key={`${item.method}-${item.path}-${index}`}>
+                                <td><span className={`method ${item.method.toLowerCase()}`}>{item.method}</span></td>
+                                <td>{item.path}</td>
+                                <td>{item.success_status}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      )}
+                    </div>
+
+                    <div className="mini-panel">
+                      <h3>Test Cases</h3>
+                      {cases.length === 0 ? (
+                        <div className="empty">Generated positive and negative cases will appear here.</div>
+                      ) : (
+                        <table>
+                          <thead><tr><th>ID</th><th>Request</th><th>Expected</th></tr></thead>
+                          <tbody>
+                            {cases.map((item) => (
+                              <tr key={item.id}>
+                                <td>{item.id}</td>
+                                <td>{item.method} {item.path}</td>
+                                <td>{item.expected_status}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="report-bar">
+                    <h3>Report Preview</h3>
+                    {reportUrl && <a className="ghost-button" href={reportPreview} target="_blank" rel="noreferrer">Open report</a>}
+                  </div>
+                  {reportUrl ? (
+                    <iframe src={reportPreview} title="Generated test report" />
+                  ) : (
+                    <div className="empty">The generated HTML report will preview here after a run.</div>
+                  )}
+                  {error && <p className="error">{error}</p>}
+                </div>
+              </SpotlightCard>
+            </section>
+          </div>
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
   </script>
 </body>
 </html>
