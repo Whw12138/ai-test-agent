@@ -5,11 +5,14 @@ from __future__ import annotations
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from ai_test_agent.agents import TestCaseDesignAgent
 from ai_test_agent.models import AnalysisResult, GeneratedSuite, PipelineResult
 from ai_test_agent.pipeline import AITestAgentPipeline
+from ai_test_agent.web_ui import WEB_UI_HTML
 
 
 app = FastAPI(
@@ -17,6 +20,11 @@ app = FastAPI(
     version="0.1.0",
     description="Generate test cases, pytest code, and execution reports from API requirements.",
 )
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+RUNS_DIR = PROJECT_ROOT / "runs"
+RUNS_DIR.mkdir(exist_ok=True)
+app.mount("/runs", StaticFiles(directory=RUNS_DIR), name="runs")
 
 
 class RequirementRequest(BaseModel):
@@ -26,6 +34,11 @@ class RequirementRequest(BaseModel):
     output_dir: str = "runs/api"
     execute: bool = True
     input_format: str = Field(default="auto", pattern="^(auto|text|openapi)$")
+
+
+@app.get("/", response_class=HTMLResponse)
+def web_ui() -> str:
+    return WEB_UI_HTML
 
 
 @app.get("/health")

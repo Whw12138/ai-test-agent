@@ -41,6 +41,22 @@ After running, open:
 - `runs/demo/reports/report.md`
 - `runs/demo/reports/report.html`
 
+## Web UI
+
+Start the FastAPI service:
+
+```bash
+python -m ai_test_agent serve --host 127.0.0.1 --port 8000
+```
+
+Open the browser UI:
+
+```text
+http://127.0.0.1:8000/
+```
+
+The Web UI can run Markdown requirements or OpenAPI JSON, display endpoints and generated test cases, and preview the generated HTML report.
+
 ## CLI Usage
 
 Generate and execute tests:
@@ -77,6 +93,7 @@ ai-test-agent serve --host 127.0.0.1 --port 8000
 
 Useful endpoints:
 
+- `GET /`
 - `GET /health`
 - `POST /analyze`
 - `POST /generate`

@@ -12,3 +12,13 @@ def test_api_analyze_endpoint():
 
     assert response.status_code == 200
     assert response.json()["endpoints"][0]["path"] == "/health"
+
+
+def test_web_ui_homepage_loads():
+    client = TestClient(app)
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert "AI Test Agent" in response.text
+    assert "Run Agent" in response.text
+    assert 'fetch("/run"' in response.text
