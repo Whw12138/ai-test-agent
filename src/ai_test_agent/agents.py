@@ -61,7 +61,7 @@ class RequirementAnalysisAgent:
     def analyze(self, requirement_text: str, source_name: str = "requirements") -> AnalysisResult:
         text = requirement_text.strip()
         if not text:
-            raise ValueError("Requirement text is empty.")
+            raise ValueError("需求文本不能为空。")
 
         endpoints = self._parse_endpoints(text)
         test_points = self._build_test_points(endpoints, text)
@@ -112,7 +112,7 @@ class RequirementAnalysisAgent:
                     TestPoint(
                         id=f"TP-{index:03d}",
                         feature=endpoint.name,
-                        description=f"Validate {endpoint.name} success, validation, and response contract.",
+                        description=f"验证 {endpoint.name} 的成功响应、参数校验和响应契约。",
                         risk_level=risk,
                         source_excerpt=endpoint.description[:180],
                     )
@@ -124,7 +124,7 @@ class RequirementAnalysisAgent:
             points.append(
                 TestPoint(
                     id=f"TP-{index:03d}",
-                    feature=f"Requirement {index}",
+                    feature=f"需求 {index}",
                     description=sentence,
                     risk_level=RiskLevel.medium,
                     source_excerpt=sentence[:180],
@@ -161,7 +161,7 @@ class TestCaseDesignAgent:
     def _positive_case(self, index: int, endpoint: EndpointSpec) -> TestCase:
         return TestCase(
             id=f"TC-{index:03d}-P",
-            title=f"{endpoint.name} returns expected success response",
+            title=f"{endpoint.name} 返回预期成功响应",
             category=TestCategory.positive,
             priority="P0" if endpoint.method == "POST" else "P1",
             method=endpoint.method,
@@ -169,13 +169,13 @@ class TestCaseDesignAgent:
             payload=endpoint.request_json,
             expected_status=endpoint.success_status,
             expected_keys=endpoint.response_keys,
-            preconditions=["Sample API service is available."],
+            preconditions=["示例 API 服务可用。"],
             steps=[
-                f"Send {endpoint.method} request to {endpoint.path}.",
-                "Validate HTTP status code.",
-                "Validate response JSON contract.",
+                f"发送 {endpoint.method} 请求到 {endpoint.path}。",
+                "校验 HTTP 状态码。",
+                "校验响应 JSON 契约。",
             ],
-            expected_result=f"Response status is {endpoint.success_status} and required response keys exist.",
+            expected_result=f"响应状态码为 {endpoint.success_status}，且必要响应字段存在。",
         )
 
     def _negative_case(self, index: int, endpoint: EndpointSpec) -> TestCase:
@@ -183,9 +183,9 @@ class TestCaseDesignAgent:
         expected_status = 422
         if payload:
             payload.pop(next(iter(payload)))
-            title = f"{endpoint.name} rejects missing required field"
+            title = f"{endpoint.name} 拒绝缺失必填字段"
         else:
-            title = f"{endpoint.name} rejects unsupported resource"
+            title = f"{endpoint.name} 拒绝不存在的资源"
             expected_status = 404
 
         path = endpoint.path if endpoint.request_json else f"{endpoint.path.rstrip('/')}/missing"
@@ -199,12 +199,12 @@ class TestCaseDesignAgent:
             payload=payload,
             expected_status=expected_status,
             expected_keys=[],
-            preconditions=["Sample API service is available."],
+            preconditions=["示例 API 服务可用。"],
             steps=[
-                f"Send invalid {endpoint.method} request to {path}.",
-                "Validate service returns a clear client error.",
+                f"发送无效的 {endpoint.method} 请求到 {path}。",
+                "校验服务返回明确的客户端错误。",
             ],
-            expected_result=f"Response status is {expected_status}.",
+            expected_result=f"响应状态码为 {expected_status}。",
         )
 
 
@@ -249,33 +249,45 @@ class PytestCodeAgent:
 
 
 def render_suite_as_markdown(suite: GeneratedSuite) -> str:
+    risk_labels = {"low": "低", "medium": "中", "high": "高"}
+    category_labels = {"positive": "正向", "boundary": "边界", "negative": "异常", "security": "安全"}
+    summary = suite.analysis.summary
+    if summary.startswith("Parsed ") and " API endpoints covering methods: " in summary:
+        count = summary.split("Parsed ", 1)[1].split(" API endpoints", 1)[0]
+        methods = summary.split("methods: ", 1)[1].rstrip(".")
+        summary = f"已解析 {count} 个接口，覆盖方法：{methods}。"
+    elif summary.startswith("Parsed free-form requirement text with "):
+        count = summary.split("with ", 1)[1].split(" characters", 1)[0]
+        summary = f"已解析 {count} 个字符的自由格式需求文本。"
     lines = [
-        f"# {suite.project_name} Test Suite",
+        f"# {suite.project_name} 测试套件",
         "",
-        f"- Target: `{suite.target_base_url}`",
-        f"- Generated at: `{suite.generated_at.isoformat()}`",
-        f"- Summary: {suite.analysis.summary}",
+        f"- 目标地址：`{suite.target_base_url}`",
+        f"- 生成时间：`{suite.generated_at.isoformat()}`",
+        f"- 摘要：{summary}",
         "",
-        "## Test Points",
+        "## 测试点",
         "",
-        "| ID | Feature | Risk | Description |",
+        "| ID | 功能 | 风险 | 说明 |",
         "| --- | --- | --- | --- |",
     ]
     for point in suite.analysis.test_points:
-        lines.append(f"| {point.id} | {point.feature} | {point.risk_level.value} | {point.description} |")
+        risk = risk_labels.get(point.risk_level.value, point.risk_level.value)
+        lines.append(f"| {point.id} | {point.feature} | {risk} | {point.description} |")
 
     lines.extend(
         [
             "",
-            "## Test Cases",
+            "## 测试用例",
             "",
-            "| ID | Category | Priority | Request | Expected |",
+            "| ID | 类别 | 优先级 | 请求 | 预期状态 |",
             "| --- | --- | --- | --- | --- |",
         ]
     )
     for case in suite.test_cases:
         request = f"{case.method} {case.path}"
-        lines.append(f"| {case.id} | {case.category.value} | {case.priority} | `{request}` | {case.expected_status} |")
+        category = category_labels.get(case.category.value, case.category.value)
+        lines.append(f"| {case.id} | {category} | {case.priority} | `{request}` | {case.expected_status} |")
     return "\n".join(lines) + "\n"
 
 

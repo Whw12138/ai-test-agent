@@ -20,5 +20,5 @@ def test_analyzer_extracts_endpoints_and_test_points():
 
 
 def test_analyzer_rejects_empty_text():
-    with pytest.raises(ValueError, match="empty"):
+    with pytest.raises(ValueError, match="不能为空"):
         RequirementAnalysisAgent().analyze("   ")

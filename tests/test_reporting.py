@@ -18,6 +18,6 @@ def test_report_contains_suite_and_execution_summary():
 
     markdown = ReportGenerator().markdown(suite, execution)
 
-    assert "Execution Result" in markdown
-    assert "Status: **PASS**" in markdown
+    assert "执行结果" in markdown
+    assert "状态：**通过**" in markdown
     assert "TC-001-P" in markdown

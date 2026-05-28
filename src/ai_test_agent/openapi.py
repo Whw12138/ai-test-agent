@@ -23,7 +23,7 @@ class OpenAPIAnalysisAgent:
         document = self._load_document(raw_document)
         paths = document.get("paths")
         if not isinstance(paths, dict) or not paths:
-            raise OpenAPIImportError("OpenAPI document must include a non-empty 'paths' object.")
+            raise OpenAPIImportError("OpenAPI 文档必须包含非空的 'paths' 对象。")
 
         endpoints: list[EndpointSpec] = []
         for path, path_item in paths.items():
@@ -35,22 +35,22 @@ class OpenAPIAnalysisAgent:
                 endpoints.append(self._operation_to_endpoint(method.upper(), path, operation))
 
         if not endpoints:
-            raise OpenAPIImportError("OpenAPI document does not contain supported HTTP operations.")
+            raise OpenAPIImportError("OpenAPI 文档不包含受支持的 HTTP 操作。")
 
         test_points = [
             TestPoint(
                 id=f"TP-{index:03d}",
                 feature=endpoint.name,
-                description=f"Validate OpenAPI contract for {endpoint.name}.",
+                description=f"验证 {endpoint.name} 的 OpenAPI 接口契约。",
                 risk_level=RiskLevel.high if endpoint.method in {"POST", "PUT", "PATCH", "DELETE"} else RiskLevel.medium,
                 source_excerpt=endpoint.description[:180],
             )
             for index, endpoint in enumerate(endpoints, start=1)
         ]
-        title = document.get("info", {}).get("title", "OpenAPI service")
+        title = document.get("info", {}).get("title", "OpenAPI 服务")
         return AnalysisResult(
             source_name=source_name,
-            summary=f"Imported {len(endpoints)} endpoints from {title}.",
+            summary=f"已从 {title} 导入 {len(endpoints)} 个接口。",
             endpoints=endpoints,
             test_points=test_points,
         )
@@ -62,11 +62,11 @@ class OpenAPIAnalysisAgent:
             try:
                 document = json.loads(raw_document)
             except json.JSONDecodeError as exc:
-                raise OpenAPIImportError("OpenAPI input must be valid JSON.") from exc
+                raise OpenAPIImportError("OpenAPI 输入必须是有效的 JSON。") from exc
         if not isinstance(document, dict):
-            raise OpenAPIImportError("OpenAPI input must be a JSON object.")
+            raise OpenAPIImportError("OpenAPI 输入必须是 JSON 对象。")
         if "openapi" not in document and "swagger" not in document:
-            raise OpenAPIImportError("OpenAPI input must include 'openapi' or 'swagger'.")
+            raise OpenAPIImportError("OpenAPI 输入必须包含 'openapi' 或 'swagger'。")
         return document
 
     def _operation_to_endpoint(self, method: str, path: str, operation: dict[str, Any]) -> EndpointSpec:

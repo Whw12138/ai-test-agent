@@ -1,11 +1,11 @@
 """Browser UI for AI Test Agent."""
 
 WEB_UI_HTML = r"""<!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AI Test Agent</title>
+  <title>AI Test Agent 智能测试助手</title>
   <style>
     :root {
       --paper: #f4f7f6;
@@ -31,7 +31,7 @@ WEB_UI_HTML = r"""<!doctype html>
         radial-gradient(circle at 84% 8%, rgba(124, 58, 237, 0.13), transparent 24%),
         linear-gradient(135deg, #f8fbfa 0%, var(--paper) 52%, #eef4f2 100%);
       color: var(--ink);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: Inter, "Microsoft YaHei", "PingFang SC", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       letter-spacing: 0;
       overflow-x: hidden;
     }
@@ -517,15 +517,15 @@ WEB_UI_HTML = r"""<!doctype html>
   <script type="text/babel">
     const { useEffect, useRef, useState } = React;
 
-    const markdownSample = `# Sample Shop API Requirements
+    const markdownSample = `# 示例商城 API 需求
 
 ## GET /health
-Description: Check whether the service is alive.
+Description: 检查服务是否存活。
 Success: 200
 Response Keys: status
 
 ## POST /login
-Description: Login with demo credentials and receive an access token.
+Description: 使用演示账号登录并获取访问令牌。
 Request JSON:
 \`\`\`json
 {"username": "demo", "password": "secret"}
@@ -534,12 +534,12 @@ Success: 200
 Response Keys: token, user_id
 
 ## GET /products
-Description: Query all available products.
+Description: 查询可售商品列表。
 Success: 200
 Response Keys: items, total
 
 ## POST /orders
-Description: Create an order for an existing product.
+Description: 为已有商品创建订单。
 Request JSON:
 \`\`\`json
 {"product_id": 1, "quantity": 2}
@@ -550,14 +550,14 @@ Response Keys: order_id, status
 
     const openApiSample = JSON.stringify({
       openapi: "3.1.0",
-      info: { title: "Sample Shop API", version: "0.1.0" },
+      info: { title: "示例商城 API", version: "0.1.0" },
       paths: {
         "/health": {
           get: {
-            summary: "Check service health",
+            summary: "检查服务健康状态",
             responses: {
               "200": {
-                description: "Service is healthy",
+                description: "服务正常",
                 content: { "application/json": { schema: { type: "object", properties: { status: { type: "string", example: "ok" } } } } }
               }
             }
@@ -565,14 +565,14 @@ Response Keys: order_id, status
         },
         "/login": {
           post: {
-            summary: "Login with demo credentials",
+            summary: "使用演示账号登录",
             requestBody: {
               required: true,
               content: { "application/json": { schema: { type: "object", required: ["username", "password"], properties: { username: { type: "string", example: "demo" }, password: { type: "string", example: "secret" } } } } }
             },
             responses: {
               "200": {
-                description: "Login succeeded",
+                description: "登录成功",
                 content: { "application/json": { schema: { type: "object", properties: { token: { type: "string" }, user_id: { type: "integer" } } } } }
               }
             }
@@ -580,10 +580,10 @@ Response Keys: order_id, status
         },
         "/products": {
           get: {
-            summary: "List products",
+            summary: "查询商品列表",
             responses: {
               "200": {
-                description: "Products returned",
+                description: "返回商品列表",
                 content: { "application/json": { schema: { type: "object", properties: { items: { type: "array" }, total: { type: "integer" } } } } }
               }
             }
@@ -591,14 +591,14 @@ Response Keys: order_id, status
         },
         "/orders": {
           post: {
-            summary: "Create an order",
+            summary: "创建订单",
             requestBody: {
               required: true,
               content: { "application/json": { schema: { type: "object", required: ["product_id", "quantity"], properties: { product_id: { type: "integer", example: 1 }, quantity: { type: "integer", example: 2 } } } } }
             },
             responses: {
               "201": {
-                description: "Order created",
+                description: "订单创建成功",
                 content: { "application/json": { schema: { type: "object", properties: { order_id: { type: "string" }, status: { type: "string" } } } } }
               }
             }
@@ -706,7 +706,7 @@ Response Keys: order_id, status
     function App() {
       const [text, setText] = useState(markdownSample);
       const [inputFormat, setInputFormat] = useState("text");
-      const [projectName, setProjectName] = useState("Demo API");
+      const [projectName, setProjectName] = useState("演示 API");
       const [outputDir, setOutputDir] = useState("runs/web");
       const [execute, setExecute] = useState(true);
       const [result, setResult] = useState(null);
@@ -714,8 +714,25 @@ Response Keys: order_id, status
       const [error, setError] = useState("");
       const [running, setRunning] = useState(false);
 
+      const statusLabels = {
+        IDLE: "待运行",
+        RUNNING: "运行中",
+        PASS: "通过",
+        FAIL: "失败",
+        ERROR: "异常",
+        GENERATED: "已生成"
+      };
+      const localizeSummary = (value) => {
+        if (!value) return "准备就绪";
+        const endpointMatch = value.match(/^Parsed (\d+) API endpoints covering methods: (.+)\.$/);
+        if (endpointMatch) return `已解析 ${endpointMatch[1]} 个接口，覆盖方法：${endpointMatch[2]}。`;
+        const textMatch = value.match(/^Parsed free-form requirement text with (\d+) characters\.$/);
+        if (textMatch) return `已解析 ${textMatch[1]} 个字符的自由格式需求文本。`;
+        return value;
+      };
+
       const execution = result?.execution;
-      const summary = result?.suite?.analysis?.summary || "Ready";
+      const summary = localizeSummary(result?.suite?.analysis?.summary);
       const reportUrl = result?.html_report ? artifactUrl(result.html_report) : "";
       const reportPreview = reportUrl ? `${reportUrl}?t=${Date.now()}` : "";
       const statusClass = status === "PASS" ? "pass" : status === "FAIL" || status === "ERROR" ? "fail" : status === "RUNNING" ? "work" : "";
@@ -748,7 +765,7 @@ Response Keys: order_id, status
             body: JSON.stringify({
               text,
               source_name: "web-ui",
-              project_name: projectName || "Demo API",
+              project_name: projectName || "演示 API",
               output_dir: outputDir || "runs/web",
               execute,
               input_format: inputFormat
@@ -756,7 +773,7 @@ Response Keys: order_id, status
           });
           const data = await response.json();
           if (!response.ok) {
-            throw new Error(data.detail || "Request failed");
+            throw new Error(data.detail || "请求失败");
           }
           setResult(data);
           setStatus(data.execution ? (data.execution.success ? "PASS" : "FAIL") : "GENERATED");
@@ -780,42 +797,42 @@ Response Keys: order_id, status
                 <div className="mark">AT</div>
                 <div>
                   <h1>AI Test Agent</h1>
-                  <p>Test development portfolio system</p>
+                  <p>测试开发作品集系统</p>
                 </div>
               </div>
               <nav className="nav">
-                <a href="/docs">Swagger</a>
+                <a href="/docs">接口文档</a>
                 <a href="https://github.com/Whw12138/ai-test-agent" target="_blank" rel="noreferrer">GitHub</a>
               </nav>
             </header>
 
             <section className="hero">
               <div className="hero-main">
-                <p className="kicker">React Bits inspired interface</p>
+                <p className="kicker">React Bits 风格界面</p>
                 <h2 className="hero-title">
-                  Turn requirements into <ShinyText>executable tests</ShinyText>.
+                  把接口需求变成<ShinyText>可执行测试</ShinyText>
                 </h2>
                 <p className="hero-copy">
-                  Paste Markdown requirements or OpenAPI JSON. The agent extracts API contracts,
-                  designs cases, generates pytest code, runs it, and previews the report in one place.
+                  粘贴 Markdown 需求或 OpenAPI JSON，Agent 会自动提取接口契约、
+                  设计测试用例、生成 pytest 代码、执行测试，并在页面内预览测试报告。
                 </p>
                 <div className="hero-actions">
                   <button className="primary-button" onClick={runAgent} disabled={running}>
-                    {running ? "Running..." : "Run Agent"}
+                    {running ? "运行中..." : "运行 Agent"}
                   </button>
-                  <button className="ghost-button" onClick={loadOpenApi}>Load OpenAPI</button>
+                  <button className="ghost-button" onClick={loadOpenApi}>载入 OpenAPI 示例</button>
                 </div>
               </div>
 
               <SpotlightCard className="insight-panel">
                 <div>
-                  <h2>What this UI shows</h2>
-                  <p>A portfolio-ready flow: input, generated contracts, generated tests, execution status, and the final report.</p>
+                  <h2>这个页面展示什么</h2>
+                  <p>一条适合放进作品集的闭环流程：输入需求、解析接口、生成用例、执行状态和最终报告。</p>
                 </div>
                 <div className="signal-grid">
-                  <div className="signal"><strong>API</strong><span>Contract parse</span></div>
-                  <div className="signal"><strong>8+</strong><span>Auto cases</span></div>
-                  <div className="signal"><strong>CI</strong><span>pytest ready</span></div>
+                  <div className="signal"><strong>API</strong><span>接口解析</span></div>
+                  <div className="signal"><strong>8+</strong><span>自动用例</span></div>
+                  <div className="signal"><strong>CI</strong><span>pytest 就绪</span></div>
                 </div>
               </SpotlightCard>
             </section>
@@ -824,43 +841,43 @@ Response Keys: order_id, status
               <SpotlightCard className="panel">
                 <div className="panel-header">
                   <div>
-                    <h2>Input Studio</h2>
-                    <p>Choose a sample or paste your own requirement document.</p>
+                    <h2>需求输入区</h2>
+                    <p>选择示例，或粘贴你自己的接口需求文档。</p>
                   </div>
                   <div className="tabs">
                     <button className={`tab-button ${inputFormat === "text" ? "active" : ""}`} onClick={loadMarkdown}>Markdown</button>
                     <button className={`tab-button ${inputFormat === "openapi" ? "active" : ""}`} onClick={loadOpenApi}>OpenAPI</button>
-                    <button className="tab-button" onClick={clearAll}>Clear</button>
+                    <button className="tab-button" onClick={clearAll}>清空</button>
                   </div>
                 </div>
                 <div className="panel-body">
                   <div className="control-row">
                     <div>
-                      <label>Project</label>
+                      <label>项目名称</label>
                       <input value={projectName} onChange={(e) => setProjectName(e.target.value)} />
                     </div>
                     <div>
-                      <label>Format</label>
+                      <label>输入格式</label>
                       <select value={inputFormat} onChange={(e) => setInputFormat(e.target.value)}>
-                        <option value="auto">Auto</option>
-                        <option value="text">Text</option>
+                        <option value="auto">自动识别</option>
+                        <option value="text">文本需求</option>
                         <option value="openapi">OpenAPI</option>
                       </select>
                     </div>
                     <div>
-                      <label>Output</label>
+                      <label>输出目录</label>
                       <input value={outputDir} onChange={(e) => setOutputDir(e.target.value)} />
                     </div>
                   </div>
-                  <label>Requirement</label>
+                  <label>需求内容</label>
                   <textarea value={text} onChange={(e) => setText(e.target.value)} spellCheck="false" />
                   <div className="run-row">
                     <label className="toggle">
                       <input type="checkbox" checked={execute} onChange={(e) => setExecute(e.target.checked)} />
-                      Execute generated pytest
+                      执行生成的 pytest
                     </label>
                     <button className="primary-button" onClick={runAgent} disabled={running || text.trim().length === 0}>
-                      {running ? "Running..." : "Generate Report"}
+                      {running ? "运行中..." : "生成报告"}
                     </button>
                   </div>
                 </div>
@@ -869,28 +886,28 @@ Response Keys: order_id, status
               <SpotlightCard className="panel">
                 <div className="panel-header">
                   <div>
-                    <h2>Execution Console</h2>
+                    <h2>执行控制台</h2>
                     <p>{summary}</p>
                   </div>
-                  <span className={`status-pill ${statusClass}`}>{status}</span>
+                  <span className={`status-pill ${statusClass}`}>{statusLabels[status] || status}</span>
                 </div>
                 <div className="panel-body">
                   <div className="metric-grid">
-                    <Metric label="Total" value={execution ? execution.total : cases.length} />
-                    <Metric label="Passed" value={execution ? execution.passed : 0} />
-                    <Metric label="Failed" value={execution ? execution.failed : 0} />
-                    <Metric label="Errors" value={execution ? execution.errors : 0} />
-                    <Metric label="Duration" value={execution ? `${execution.duration_seconds.toFixed(2)}s` : "-"} />
+                    <Metric label="用例总数" value={execution ? execution.total : cases.length} />
+                    <Metric label="通过" value={execution ? execution.passed : 0} />
+                    <Metric label="失败" value={execution ? execution.failed : 0} />
+                    <Metric label="错误" value={execution ? execution.errors : 0} />
+                    <Metric label="耗时" value={execution ? `${execution.duration_seconds.toFixed(2)}s` : "-"} />
                   </div>
 
                   <div className="result-grid">
                     <div className="mini-panel">
-                      <h3>Endpoints</h3>
+                      <h3>接口列表</h3>
                       {endpoints.length === 0 ? (
-                        <div className="empty">Run the agent to see parsed API contracts.</div>
+                        <div className="empty">运行 Agent 后，这里会展示解析出的 API 契约。</div>
                       ) : (
                         <table>
-                          <thead><tr><th>Method</th><th>Path</th><th>Status</th></tr></thead>
+                          <thead><tr><th>方法</th><th>路径</th><th>成功状态码</th></tr></thead>
                           <tbody>
                             {endpoints.map((item, index) => (
                               <tr key={`${item.method}-${item.path}-${index}`}>
@@ -905,12 +922,12 @@ Response Keys: order_id, status
                     </div>
 
                     <div className="mini-panel">
-                      <h3>Test Cases</h3>
+                      <h3>测试用例</h3>
                       {cases.length === 0 ? (
-                        <div className="empty">Generated positive and negative cases will appear here.</div>
+                        <div className="empty">生成的正向、异常和边界类用例会显示在这里。</div>
                       ) : (
                         <table>
-                          <thead><tr><th>ID</th><th>Request</th><th>Expected</th></tr></thead>
+                          <thead><tr><th>ID</th><th>请求</th><th>预期状态</th></tr></thead>
                           <tbody>
                             {cases.map((item) => (
                               <tr key={item.id}>
@@ -926,13 +943,13 @@ Response Keys: order_id, status
                   </div>
 
                   <div className="report-bar">
-                    <h3>Report Preview</h3>
-                    {reportUrl && <a className="ghost-button" href={reportPreview} target="_blank" rel="noreferrer">Open report</a>}
+                    <h3>报告预览</h3>
+                    {reportUrl && <a className="ghost-button" href={reportPreview} target="_blank" rel="noreferrer">打开报告</a>}
                   </div>
                   {reportUrl ? (
-                    <iframe src={reportPreview} title="Generated test report" />
+                    <iframe src={reportPreview} title="生成的测试报告" />
                   ) : (
-                    <div className="empty">The generated HTML report will preview here after a run.</div>
+                    <div className="empty">运行完成后，这里会预览生成的 HTML 测试报告。</div>
                   )}
                   {error && <p className="error">{error}</p>}
                 </div>

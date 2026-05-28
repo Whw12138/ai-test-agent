@@ -21,7 +21,7 @@ def test_openapi_importer_extracts_contracts():
 
 
 def test_openapi_importer_rejects_invalid_json():
-    with pytest.raises(OpenAPIImportError, match="valid JSON"):
+    with pytest.raises(OpenAPIImportError, match="有效的 JSON"):
         OpenAPIAnalysisAgent().analyze("{not-json")
 
 
