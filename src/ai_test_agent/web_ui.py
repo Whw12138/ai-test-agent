@@ -592,13 +592,471 @@ WEB_UI_HTML = r"""<!doctype html>
       white-space: pre-wrap;
       line-height: 1.5;
     }
+    .mimo-shell {
+      width: min(1680px, calc(100vw - 24px));
+      padding: 10px 0 28px;
+    }
+    .desktop-topbar {
+      display: grid;
+      grid-template-columns: auto minmax(220px, 1fr) auto auto auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 56px;
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border: 1px solid rgba(119, 100, 72, 0.16);
+      border-radius: 22px 22px 10px 10px;
+      background:
+        linear-gradient(180deg, rgba(255, 253, 241, 0.94), rgba(255, 249, 229, 0.82)),
+        repeating-linear-gradient(90deg, rgba(82, 179, 165, 0.055) 0 12px, transparent 12px 28px);
+      box-shadow: 0 10px 28px rgba(73, 84, 66, 0.12);
+      backdrop-filter: blur(18px);
+    }
+    .traffic {
+      display: flex;
+      gap: 8px;
+      padding: 0 8px;
+    }
+    .traffic span {
+      width: 13px;
+      height: 13px;
+      border-radius: 999px;
+      box-shadow: inset 0 -2px 0 rgba(0,0,0,0.08);
+    }
+    .traffic span:nth-child(1) { background: #ff6f62; }
+    .traffic span:nth-child(2) { background: #f6c64b; }
+    .traffic span:nth-child(3) { background: #55c86f; }
+    .top-chip,
+    .desktop-nav a,
+    .desktop-nav button {
+      min-height: 38px;
+      border: 1px solid rgba(119, 100, 72, 0.14);
+      border-radius: 999px;
+      background: rgba(255, 253, 245, 0.88);
+      box-shadow: 0 3px 0 rgba(119, 100, 72, 0.08);
+    }
+    .top-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      width: fit-content;
+      padding: 0 13px 0 8px;
+      color: #4d4a3d;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .top-chip em {
+      color: #7d7a69;
+      font-style: normal;
+      font-weight: 700;
+    }
+    .tiny-avatar {
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 48% 52% 46% 54%;
+      background: linear-gradient(145deg, #6bd38f, #1aa892);
+      color: #fff8df;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .model-stack {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .model-stack .top-chip {
+      padding: 0 14px;
+    }
+    .clock {
+      min-width: 148px;
+      text-align: center;
+      color: #9b947e;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .desktop-nav {
+      display: inline-flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .desktop-nav a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 13px;
+      color: #574f3f;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .desktop-frame {
+      display: grid;
+      grid-template-columns: 320px minmax(520px, 1fr) 330px;
+      gap: 12px;
+      min-height: calc(100vh - 92px);
+      padding: 12px;
+      border: 1px solid rgba(119, 100, 72, 0.16);
+      border-radius: 10px 10px 26px 26px;
+      background:
+        linear-gradient(90deg, rgba(236, 250, 241, 0.72), rgba(255, 253, 242, 0.96) 22%, rgba(255, 250, 232, 0.96) 74%, rgba(245, 250, 236, 0.8)),
+        radial-gradient(circle at 52% 24%, rgba(255, 234, 122, 0.18), transparent 24%);
+      box-shadow: 0 24px 70px rgba(88, 94, 72, 0.16);
+      backdrop-filter: blur(20px);
+    }
+    .side-dock,
+    .workbench,
+    .asset-dock {
+      min-width: 0;
+      border: 1px solid rgba(119, 100, 72, 0.14);
+      border-radius: 22px;
+      background: rgba(255, 251, 233, 0.74);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.72), 0 10px 24px rgba(93, 95, 72, 0.1);
+    }
+    .side-dock,
+    .asset-dock {
+      padding: 14px;
+    }
+    .dock-search {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 42px;
+      margin-bottom: 14px;
+      padding: 0 12px;
+      border: 1px solid rgba(119, 100, 72, 0.18);
+      border-radius: 999px;
+      background: rgba(255, 253, 244, 0.86);
+      color: #8c846d;
+      font-size: 13px;
+      box-shadow: inset 0 2px 8px rgba(119, 100, 72, 0.05);
+    }
+    .dock-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 14px 0 8px;
+      color: #645d4b;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .dock-title span {
+      color: #8a836d;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .ability-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .ability-tabs button,
+    .mimo-tab,
+    .mini-action {
+      min-height: 40px;
+      border: 1px solid rgba(119, 100, 72, 0.14);
+      border-radius: 999px;
+      background: rgba(255, 253, 244, 0.84);
+      color: #5c5544;
+      font-weight: 900;
+      box-shadow: 0 4px 0 rgba(119, 100, 72, 0.08);
+    }
+    .ability-tabs button.active,
+    .mimo-tab.active,
+    .mini-action.active {
+      background: linear-gradient(180deg, #46cbbd, #25b9aa);
+      color: #ffffff;
+      border-color: rgba(37, 185, 170, 0.34);
+      box-shadow: 0 5px 0 rgba(32, 139, 127, 0.18);
+    }
+    .side-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 10px;
+      align-items: center;
+      min-height: 70px;
+      margin-bottom: 10px;
+      padding: 12px;
+      border: 1px solid rgba(119, 100, 72, 0.14);
+      border-left: 5px solid rgba(67, 200, 191, 0.75);
+      border-radius: 18px;
+      background: rgba(255, 253, 244, 0.82);
+      box-shadow: 0 3px 0 rgba(119, 100, 72, 0.08);
+    }
+    .side-card strong {
+      display: block;
+      color: #3a382e;
+      font-size: 14px;
+    }
+    .side-card span {
+      display: block;
+      margin-top: 3px;
+      color: #7a725f;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .side-card .icon,
+    .asset-icon,
+    .work-avatar {
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 30% 24%, rgba(255,255,255,0.72), transparent 35%),
+        linear-gradient(145deg, #c9f4d8, #7bdacb);
+      color: #2a7f72;
+      font-weight: 900;
+    }
+    .side-card .icon {
+      width: 38px;
+      height: 38px;
+    }
+    .side-card.muted {
+      border-left-color: rgba(142, 126, 218, 0.6);
+      opacity: 0.86;
+    }
+    .workbench {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 18px;
+      background:
+        linear-gradient(180deg, rgba(255, 253, 242, 0.88), rgba(255, 250, 232, 0.66));
+    }
+    .work-heading {
+      display: grid;
+      grid-template-columns: 54px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 22px;
+      background: rgba(255, 253, 244, 0.72);
+    }
+    .work-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 20px;
+      font-size: 18px;
+    }
+    .work-heading p,
+    .work-heading h1 {
+      margin: 0;
+    }
+    .work-heading p {
+      color: #27a799;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .work-heading h1 {
+      margin-top: 3px;
+      color: #433927;
+      font-size: 26px;
+      line-height: 1.1;
+    }
+    .work-heading small {
+      display: block;
+      margin-top: 5px;
+      color: #827a66;
+      line-height: 1.4;
+    }
+    .flow-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 8px;
+      border-radius: 999px;
+      background: rgba(255, 253, 244, 0.75);
+      border: 1px solid rgba(119, 100, 72, 0.12);
+    }
+    .flow-strip span {
+      min-width: 0;
+      padding: 8px 10px;
+      border-radius: 999px;
+      color: #726b58;
+      font-size: 12px;
+      font-weight: 900;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .flow-strip .active {
+      background: #d7f6ef;
+      color: #158a7e;
+    }
+    .mimo-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .task-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .task-card {
+      min-height: 88px;
+      padding: 14px;
+      border: 1px solid rgba(119, 100, 72, 0.14);
+      border-radius: 20px;
+      background: rgba(255, 253, 244, 0.78);
+      color: #463d2f;
+      text-align: left;
+      box-shadow: 0 4px 0 rgba(119, 100, 72, 0.08);
+    }
+    .task-card strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #2d8f80;
+      font-size: 15px;
+    }
+    .task-card span {
+      color: #7b735f;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .task-card.primary-task {
+      background: linear-gradient(160deg, #38c4b4, #2fc5a4);
+      color: #fff;
+    }
+    .task-card.primary-task strong,
+    .task-card.primary-task span {
+      color: #fff;
+    }
+    .draft-card,
+    .console-card {
+      border: 1px solid rgba(119, 100, 72, 0.15);
+      border-radius: 22px;
+      background: rgba(255, 253, 244, 0.8);
+      box-shadow: 0 4px 0 rgba(119, 100, 72, 0.08);
+      overflow: hidden;
+    }
+    .draft-head,
+    .console-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 14px;
+      border-bottom: 1px dashed rgba(119, 100, 72, 0.16);
+    }
+    .draft-head strong,
+    .console-head strong {
+      color: #3f382d;
+      font-size: 15px;
+    }
+    .draft-head span,
+    .console-head span {
+      color: #8a826d;
+      font-size: 12px;
+    }
+    .draft-body,
+    .console-body {
+      padding: 14px;
+    }
+    .asset-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .asset-tabs span {
+      display: grid;
+      place-items: center;
+      min-height: 34px;
+      border-radius: 999px;
+      background: rgba(255,253,244,0.74);
+      color: #716955;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .asset-tabs .active {
+      background: #d8f6ed;
+      color: #1c8a7c;
+    }
+    .asset-card {
+      margin-bottom: 12px;
+      padding: 14px;
+      border: 1px solid rgba(119, 100, 72, 0.14);
+      border-radius: 20px;
+      background: rgba(255, 253, 244, 0.78);
+      box-shadow: 0 4px 0 rgba(119, 100, 72, 0.07);
+    }
+    .asset-card h3 {
+      margin: 0 0 6px;
+      color: #41392d;
+      font-size: 15px;
+    }
+    .asset-card p {
+      margin: 0;
+      color: #807762;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .asset-card.feature {
+      min-height: 210px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border-left: 5px solid #8e86e8;
+      background:
+        radial-gradient(circle at 50% 22%, rgba(67,200,191,0.22), transparent 28%),
+        rgba(255, 253, 244, 0.78);
+    }
+    .asset-icon {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 12px;
+      font-size: 18px;
+    }
+    .asset-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .asset-metrics div {
+      min-height: 58px;
+      padding: 10px;
+      border-radius: 14px;
+      background: rgba(255, 253, 244, 0.78);
+      border: 1px solid rgba(119, 100, 72, 0.1);
+      color: #453e32;
+      font-weight: 900;
+    }
+    .asset-metrics span {
+      display: block;
+      margin-top: 4px;
+      color: #807762;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .console-card .result-grid {
+      margin-bottom: 14px;
+    }
     @media (max-width: 1080px) {
+      .desktop-topbar { grid-template-columns: auto 1fr; }
+      .model-stack, .clock { display: none; }
+      .desktop-nav { justify-content: flex-start; }
+      .desktop-frame { grid-template-columns: 1fr; }
+      .side-dock, .asset-dock { order: initial; }
       .hero, .workspace { grid-template-columns: 1fr; }
       .control-row, .result-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 720px) {
-      .app-shell { width: min(100vw - 20px, 1480px); padding-top: 12px; }
-      .topbar { align-items: flex-start; flex-direction: column; }
+      .mimo-shell { width: min(100vw - 12px, 1480px); padding-top: 8px; }
+      .desktop-topbar { border-radius: 20px; }
+      .desktop-nav { grid-column: 1 / -1; }
+      .desktop-frame { padding: 8px; border-radius: 20px; }
+      .workbench, .side-dock, .asset-dock { padding: 12px; border-radius: 20px; }
+      .work-heading { grid-template-columns: 46px 1fr; }
+      .work-heading .mini-action { grid-column: 1 / -1; }
+      .flow-strip, .mimo-tabs, .task-grid, .asset-metrics { grid-template-columns: 1fr 1fr; }
       .hero-main { padding: 20px; }
       .metric-grid, .signal-grid { grid-template-columns: 1fr 1fr; }
       textarea { min-height: 320px; }
@@ -810,6 +1268,20 @@ Response Keys: order_id, status
       const [status, setStatus] = useState("IDLE");
       const [error, setError] = useState("");
       const [running, setRunning] = useState(false);
+      const [clockText, setClockText] = useState("");
+
+      useEffect(() => {
+        const updateClock = () => {
+          const now = new Date();
+          const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+          const hours = String(now.getHours()).padStart(2, "0");
+          const minutes = String(now.getMinutes()).padStart(2, "0");
+          setClockText(`${weekdays[now.getDay()]} ${now.getMonth() + 1}/${now.getDate()} ${hours}:${minutes}`);
+        };
+        updateClock();
+        const timer = setInterval(updateClock, 30000);
+        return () => clearInterval(timer);
+      }, []);
 
       const statusLabels = {
         IDLE: "待运行",
@@ -888,169 +1360,237 @@ Response Keys: order_id, status
       return (
         <>
           <DotField />
-          <div className="app-shell">
-            <header className="topbar">
-              <div className="brand">
-                <div className="mark">AT</div>
-                <div>
-                  <h1>AI Test Agent</h1>
-                  <p>测试开发作品集系统</p>
-                </div>
+          <div className="app-shell mimo-shell">
+            <header className="desktop-topbar">
+              <div className="traffic" aria-hidden="true"><span></span><span></span><span></span></div>
+              <div className="top-chip">
+                <span className="tiny-avatar">AT</span>
+                <strong>AI Test Agent</strong>
+                <em>本地项目执行</em>
               </div>
-              <nav className="nav">
+              <div className="model-stack">
+                <span className="top-chip">v0.1 Pro</span>
+                <span className="top-chip">测试开发</span>
+                <span className="top-chip">快速</span>
+              </div>
+              <div className="clock">{clockText}</div>
+              <nav className="desktop-nav">
                 <a href="/docs">接口文档</a>
                 <a href="https://github.com/Whw12138/ai-test-agent" target="_blank" rel="noreferrer">GitHub</a>
               </nav>
             </header>
 
-            <section className="hero">
-              <div className="hero-main">
-                <p className="kicker">岛屿手账风界面</p>
-                <h2 className="hero-title">
-                  把接口需求变成<ShinyText>可执行测试</ShinyText>
-                </h2>
-                <p className="hero-copy">
-                  粘贴 Markdown 需求或 OpenAPI JSON，Agent 会自动提取接口契约、
-                  设计测试用例、生成 pytest 代码、执行测试，并在页面内预览测试报告。
-                </p>
-                <div className="hero-actions">
-                  <button className="primary-button" onClick={runAgent} disabled={running}>
-                    {running ? "运行中..." : "运行 Agent"}
-                  </button>
-                  <button className="ghost-button" onClick={loadOpenApi}>载入 OpenAPI 示例</button>
+            <section className="desktop-frame">
+              <aside className="side-dock">
+                <div className="dock-search"><span>ai-test-agent</span><span>搜索</span></div>
+                <div className="dock-title">能力中心 <span>主区操作</span></div>
+                <div className="ability-tabs">
+                  <button className="active" onClick={loadMarkdown}>编程</button>
+                  <button onClick={loadOpenApi}>联调</button>
+                  <button>多模态</button>
+                  <button>语音</button>
                 </div>
-              </div>
+                <div className="side-card">
+                  <div className="icon">API</div>
+                  <div><strong>AI Test Agent</strong><span>接口测试用例生成与自动执行</span></div>
+                </div>
+                <div className="side-card muted">
+                  <div className="icon">CI</div>
+                  <div><strong>工程展示</strong><span>pytest、报告、GitHub Actions</span></div>
+                </div>
+                <div className="dock-title">成果与状态</div>
+                <div className="side-card">
+                  <div className="icon">{execution ? execution.total : cases.length}</div>
+                  <div><strong>测试资产</strong><span>用例、脚本、HTML 报告</span></div>
+                </div>
+                <div className="side-card muted">
+                  <div className="icon">{endpoints.length}</div>
+                  <div><strong>上下文</strong><span>需求文档与接口契约</span></div>
+                </div>
+                <div className="side-card muted">
+                  <div className="icon">{statusLabels[status] || status}</div>
+                  <div><strong>任务</strong><span>运行状态看板</span></div>
+                </div>
+              </aside>
 
-              <SpotlightCard className="insight-panel">
-                <div>
-                  <h2>测试岛公告板</h2>
-                  <p>一条适合放进作品集的闭环流程：输入需求、解析接口、生成用例、执行状态和最终报告。</p>
-                </div>
-                <div className="signal-grid">
-                  <div className="signal"><strong>API</strong><span>接口解析</span></div>
-                  <div className="signal"><strong>8+</strong><span>自动用例</span></div>
-                  <div className="signal"><strong>CI</strong><span>pytest 就绪</span></div>
-                </div>
-              </SpotlightCard>
-            </section>
-
-            <section className="workspace">
-              <SpotlightCard className="panel">
-                <div className="panel-header">
+              <main className="workbench">
+                <div className="work-heading">
+                  <div className="work-avatar">AI</div>
                   <div>
-                    <h2>需求输入区</h2>
-                    <p>选择示例，或粘贴你自己的接口需求文档。</p>
+                    <p>AI 测试工作流</p>
+                    <h1>编程</h1>
+                    <small>把需求交给工作台，自动完成接口解析、用例设计、代码生成、测试执行和报告归档。</small>
                   </div>
-                  <div className="tabs">
-                    <button className={`tab-button ${inputFormat === "text" ? "active" : ""}`} onClick={loadMarkdown}>Markdown</button>
-                    <button className={`tab-button ${inputFormat === "openapi" ? "active" : ""}`} onClick={loadOpenApi}>OpenAPI</button>
-                    <button className="tab-button" onClick={clearAll}>清空</button>
-                  </div>
+                  <button className="mini-action" onClick={clearAll}>返回空白任务</button>
                 </div>
-                <div className="panel-body">
-                  <div className="control-row">
-                    <div>
-                      <label>项目名称</label>
-                      <input value={projectName} onChange={(e) => setProjectName(e.target.value)} />
-                    </div>
-                    <div>
-                      <label>输入格式</label>
-                      <select value={inputFormat} onChange={(e) => setInputFormat(e.target.value)}>
-                        <option value="auto">自动识别</option>
-                        <option value="text">文本需求</option>
-                        <option value="openapi">OpenAPI</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label>输出目录</label>
-                      <input value={outputDir} onChange={(e) => setOutputDir(e.target.value)} />
-                    </div>
-                  </div>
-                  <label>需求内容</label>
-                  <textarea value={text} onChange={(e) => setText(e.target.value)} spellCheck="false" />
-                  <div className="run-row">
-                    <label className="toggle">
-                      <input type="checkbox" checked={execute} onChange={(e) => setExecute(e.target.checked)} />
-                      执行生成的 pytest
-                    </label>
+
+                <div className="flow-strip">
+                  <span className="active">当前：编程</span>
+                  <span>填入参数</span>
+                  <span>保存成果</span>
+                </div>
+
+                <div className="mimo-tabs">
+                  <button className={`mimo-tab ${inputFormat === "text" ? "active" : ""}`} onClick={loadMarkdown}>编程</button>
+                  <button className={`mimo-tab ${inputFormat === "openapi" ? "active" : ""}`} onClick={loadOpenApi}>联调</button>
+                  <button className="mimo-tab" onClick={loadOpenApi}>契约</button>
+                  <button className="mimo-tab" onClick={clearAll}>清空</button>
+                </div>
+
+                <div className="task-grid">
+                  <button className="task-card primary-task" onClick={runAgent} disabled={running || text.trim().length === 0}>
+                    <strong>{running ? "运行中..." : "运行 Agent"}</strong>
+                    <span>从需求到报告，一次跑完整闭环。</span>
+                  </button>
+                  <button className="task-card" onClick={loadOpenApi}>
+                    <strong>读取接口契约</strong>
+                    <span>载入 OpenAPI 示例，检查解析和用例生成。</span>
+                  </button>
+                  <button className="task-card" onClick={loadMarkdown}>
+                    <strong>整理需求</strong>
+                    <span>切回 Markdown 示例，适合面试演示。</span>
+                  </button>
+                  <button className="task-card" onClick={clearAll}>
+                    <strong>重置工作台</strong>
+                    <span>清空输入和运行结果，重新开始。</span>
+                  </button>
+                </div>
+
+                <section className="draft-card">
+                  <div className="draft-head">
+                    <div><strong>任务草稿</strong><span> 在当前项目里实现这个测试任务</span></div>
                     <button className="primary-button" onClick={runAgent} disabled={running || text.trim().length === 0}>
                       {running ? "运行中..." : "生成报告"}
                     </button>
                   </div>
-                </div>
-              </SpotlightCard>
-
-              <SpotlightCard className="panel">
-                <div className="panel-header">
-                  <div>
-                    <h2>执行控制台</h2>
-                    <p>{summary}</p>
-                  </div>
-                  <span className={`status-pill ${statusClass}`}>{statusLabels[status] || status}</span>
-                </div>
-                <div className="panel-body">
-                  <div className="metric-grid">
-                    <Metric label="用例总数" value={execution ? execution.total : cases.length} />
-                    <Metric label="通过" value={execution ? execution.passed : 0} />
-                    <Metric label="失败" value={execution ? execution.failed : 0} />
-                    <Metric label="错误" value={execution ? execution.errors : 0} />
-                    <Metric label="耗时" value={execution ? `${execution.duration_seconds.toFixed(2)}s` : "-"} />
-                  </div>
-
-                  <div className="result-grid">
-                    <div className="mini-panel">
-                      <h3>接口列表</h3>
-                      {endpoints.length === 0 ? (
-                        <div className="empty">运行 Agent 后，这里会展示解析出的 API 契约。</div>
-                      ) : (
-                        <table>
-                          <thead><tr><th>方法</th><th>路径</th><th>成功状态码</th></tr></thead>
-                          <tbody>
-                            {endpoints.map((item, index) => (
-                              <tr key={`${item.method}-${item.path}-${index}`}>
-                                <td><span className={`method ${item.method.toLowerCase()}`}>{item.method}</span></td>
-                                <td>{item.path}</td>
-                                <td>{item.success_status}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      )}
+                  <div className="draft-body">
+                    <div className="control-row">
+                      <div>
+                        <label>项目名称</label>
+                        <input value={projectName} onChange={(e) => setProjectName(e.target.value)} />
+                      </div>
+                      <div>
+                        <label>输入格式</label>
+                        <select value={inputFormat} onChange={(e) => setInputFormat(e.target.value)}>
+                          <option value="auto">自动识别</option>
+                          <option value="text">文本需求</option>
+                          <option value="openapi">OpenAPI</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label>输出目录</label>
+                        <input value={outputDir} onChange={(e) => setOutputDir(e.target.value)} />
+                      </div>
                     </div>
-
-                    <div className="mini-panel">
-                      <h3>测试用例</h3>
-                      {cases.length === 0 ? (
-                        <div className="empty">生成的正向、异常和边界类用例会显示在这里。</div>
-                      ) : (
-                        <table>
-                          <thead><tr><th>ID</th><th>请求</th><th>预期状态</th></tr></thead>
-                          <tbody>
-                            {cases.map((item) => (
-                              <tr key={item.id}>
-                                <td>{item.id}</td>
-                                <td>{item.method} {item.path}</td>
-                                <td>{item.expected_status}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      )}
+                    <label>需求内容</label>
+                    <textarea value={text} onChange={(e) => setText(e.target.value)} spellCheck="false" />
+                    <div className="run-row">
+                      <label className="toggle">
+                        <input type="checkbox" checked={execute} onChange={(e) => setExecute(e.target.checked)} />
+                        执行生成的 pytest
+                      </label>
+                      <span className={`status-pill ${statusClass}`}>{statusLabels[status] || status}</span>
                     </div>
                   </div>
+                </section>
 
-                  <div className="report-bar">
-                    <h3>报告预览</h3>
+                <section className="console-card">
+                  <div className="console-head">
+                    <div><strong>执行结果</strong><span> {summary}</span></div>
                     {reportUrl && <a className="ghost-button" href={reportPreview} target="_blank" rel="noreferrer">打开报告</a>}
                   </div>
-                  {reportUrl ? (
-                    <iframe src={reportPreview} title="生成的测试报告" />
-                  ) : (
-                    <div className="empty">运行完成后，这里会预览生成的 HTML 测试报告。</div>
-                  )}
-                  {error && <p className="error">{error}</p>}
+                  <div className="console-body">
+                    <div className="metric-grid">
+                      <Metric label="用例总数" value={execution ? execution.total : cases.length} />
+                      <Metric label="通过" value={execution ? execution.passed : 0} />
+                      <Metric label="失败" value={execution ? execution.failed : 0} />
+                      <Metric label="错误" value={execution ? execution.errors : 0} />
+                      <Metric label="耗时" value={execution ? `${execution.duration_seconds.toFixed(2)}s` : "-"} />
+                    </div>
+
+                    <div className="result-grid">
+                      <div className="mini-panel">
+                        <h3>接口列表</h3>
+                        {endpoints.length === 0 ? (
+                          <div className="empty">运行 Agent 后，这里会展示解析出的 API 契约。</div>
+                        ) : (
+                          <table>
+                            <thead><tr><th>方法</th><th>路径</th><th>成功状态码</th></tr></thead>
+                            <tbody>
+                              {endpoints.map((item, index) => (
+                                <tr key={`${item.method}-${item.path}-${index}`}>
+                                  <td><span className={`method ${item.method.toLowerCase()}`}>{item.method}</span></td>
+                                  <td>{item.path}</td>
+                                  <td>{item.success_status}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        )}
+                      </div>
+
+                      <div className="mini-panel">
+                        <h3>测试用例</h3>
+                        {cases.length === 0 ? (
+                          <div className="empty">生成的正向、异常和边界类用例会显示在这里。</div>
+                        ) : (
+                          <table>
+                            <thead><tr><th>ID</th><th>请求</th><th>预期状态</th></tr></thead>
+                            <tbody>
+                              {cases.map((item) => (
+                                <tr key={item.id}>
+                                  <td>{item.id}</td>
+                                  <td>{item.method} {item.path}</td>
+                                  <td>{item.expected_status}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        )}
+                      </div>
+                    </div>
+                    {reportUrl ? (
+                      <iframe src={reportPreview} title="生成的测试报告" />
+                    ) : (
+                      <div className="empty">运行完成后，这里会预览生成的 HTML 测试报告。</div>
+                    )}
+                    {error && <p className="error">{error}</p>}
+                  </div>
+                </section>
+              </main>
+
+              <aside className="asset-dock">
+                <div className="asset-tabs">
+                  <span className="active">资产 {cases.length}</span>
+                  <span>上下文 {endpoints.length}</span>
+                  <span>变更 0</span>
+                  <span>任务 {status === "IDLE" ? 0 : 1}</span>
                 </div>
-              </SpotlightCard>
+                <div className="asset-card">
+                  <h3>资产码头</h3>
+                  <p>输出资产会在这里汇总：接口契约、测试用例、pytest 脚本和 HTML 报告。</p>
+                </div>
+                <div className="asset-metrics">
+                  <div>{endpoints.length}<span>接口</span></div>
+                  <div>{cases.length}<span>用例</span></div>
+                  <div>{reportUrl ? 1 : 0}<span>报告</span></div>
+                </div>
+                <div className="asset-card feature">
+                  <div>
+                    <div className="asset-icon">AT</div>
+                    <h3>{reportUrl ? "已有可用资产" : "还没有可用资产"}</h3>
+                    <p>{reportUrl ? "报告已生成，可以打开查看或继续修改需求重新运行。" : "先生成测试报告，完成后会自动归档到这里。"}</p>
+                    <div className="hero-actions">
+                      <button className="mini-action active" onClick={runAgent} disabled={running || text.trim().length === 0}>生成资产</button>
+                      <button className="mini-action" onClick={loadOpenApi}>分析契约</button>
+                    </div>
+                  </div>
+                </div>
+                <div className="asset-card">
+                  <h3>能力状态</h3>
+                  <p>入口 {inputFormat === "openapi" ? "OpenAPI" : "Markdown"}，授权可执行，结果回到当前工作台。</p>
+                </div>
+              </aside>
             </section>
           </div>
         </>
