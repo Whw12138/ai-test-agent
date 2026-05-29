@@ -8,32 +8,67 @@ WEB_UI_HTML = r"""<!doctype html>
   <title>AI Test Agent 智能测试助手</title>
   <style>
     :root {
-      --paper: #f4f7f6;
-      --panel: rgba(255, 255, 255, 0.82);
-      --panel-solid: #ffffff;
-      --ink: #17211f;
-      --muted: #63716d;
-      --line: rgba(37, 52, 47, 0.14);
-      --aqua: #10b6a8;
-      --blue: #2563eb;
-      --leaf: #19a463;
-      --amber: #b7791f;
-      --rose: #c2414b;
-      --violet: #7c3aed;
-      --shadow: 0 24px 70px rgba(32, 44, 40, 0.12);
+      --sky: #dff6f0;
+      --grass: #9edc8a;
+      --leaf: #39aa70;
+      --deep-leaf: #1f795b;
+      --pond: #86d5da;
+      --shell: #fff8dc;
+      --paper: #fff8e7;
+      --paper-2: #fff2c7;
+      --wood: #b97845;
+      --wood-dark: #6f472c;
+      --ink: #2d3528;
+      --muted: #6d765f;
+      --line: rgba(111, 71, 44, 0.22);
+      --aqua: #43c8bf;
+      --blue: #4c8ed9;
+      --amber: #e2a744;
+      --rose: #d65d64;
+      --violet: #9071d8;
+      --shadow: 0 18px 0 rgba(111, 71, 44, 0.1), 0 28px 60px rgba(82, 102, 70, 0.18);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(circle at 12% 18%, rgba(16, 182, 168, 0.16), transparent 28%),
-        radial-gradient(circle at 84% 8%, rgba(124, 58, 237, 0.13), transparent 24%),
-        linear-gradient(135deg, #f8fbfa 0%, var(--paper) 52%, #eef4f2 100%);
+        radial-gradient(circle at 12% 8%, rgba(255, 248, 220, 0.88), transparent 18%),
+        radial-gradient(circle at 86% 10%, rgba(134, 213, 218, 0.46), transparent 22%),
+        radial-gradient(circle at 18% 92%, rgba(57, 170, 112, 0.26), transparent 26%),
+        linear-gradient(180deg, var(--sky) 0%, #edf9e9 44%, #c9e9ab 100%);
       color: var(--ink);
       font-family: Inter, "Microsoft YaHei", "PingFang SC", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       letter-spacing: 0;
       overflow-x: hidden;
+    }
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      left: -8vw;
+      right: -8vw;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      top: 0;
+      height: 180px;
+      background:
+        radial-gradient(circle at 12% 64%, rgba(255,255,255,0.9) 0 24px, transparent 25px),
+        radial-gradient(circle at 17% 58%, rgba(255,255,255,0.86) 0 34px, transparent 35px),
+        radial-gradient(circle at 72% 72%, rgba(255,255,255,0.72) 0 28px, transparent 29px),
+        radial-gradient(circle at 78% 66%, rgba(255,255,255,0.74) 0 40px, transparent 41px);
+      opacity: 0.78;
+    }
+    body::after {
+      bottom: -90px;
+      height: 270px;
+      background:
+        radial-gradient(60% 90% at 14% 0%, rgba(68, 167, 112, 0.38), transparent 64%),
+        radial-gradient(68% 100% at 72% 8%, rgba(255, 230, 126, 0.36), transparent 62%),
+        radial-gradient(54% 80% at 46% 12%, rgba(134, 213, 218, 0.34), transparent 66%);
+      filter: blur(0.2px);
     }
     a { color: inherit; text-decoration: none; }
     button, input, select, textarea { font: inherit; }
@@ -53,21 +88,28 @@ WEB_UI_HTML = r"""<!doctype html>
       height: 100%;
       z-index: 0;
       pointer-events: none;
-      opacity: 0.72;
+      opacity: 0.5;
     }
     .app-shell {
       position: relative;
       z-index: 1;
       width: min(1480px, calc(100vw - 32px));
       margin: 0 auto;
-      padding: 22px 0 34px;
+      padding: 20px 0 36px;
     }
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 18px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
+      padding: 10px 12px;
+      border: 2px solid rgba(111, 71, 44, 0.18);
+      border-radius: 24px 30px 22px 28px;
+      background:
+        linear-gradient(90deg, rgba(255,248,220,0.82), rgba(255,255,255,0.64)),
+        repeating-linear-gradient(90deg, rgba(185,120,69,0.08) 0 8px, rgba(255,255,255,0) 8px 18px);
+      box-shadow: 0 10px 0 rgba(111, 71, 44, 0.08);
     }
     .brand {
       display: flex;
@@ -78,22 +120,27 @@ WEB_UI_HTML = r"""<!doctype html>
     .mark {
       display: grid;
       place-items: center;
-      width: 42px;
+      width: 46px;
       height: 42px;
-      border-radius: 12px;
-      background: #16231f;
-      color: #c9fff6;
-      font-weight: 800;
-      box-shadow: 0 14px 34px rgba(22, 35, 31, 0.24);
+      border: 2px solid rgba(20, 91, 66, 0.24);
+      border-radius: 55% 45% 58% 42% / 44% 55% 45% 56%;
+      background:
+        radial-gradient(circle at 32% 24%, rgba(255,255,255,0.55), transparent 32%),
+        linear-gradient(145deg, #58c987, #1f8a5f);
+      color: #fffbe8;
+      font-weight: 900;
+      box-shadow: 0 8px 0 rgba(31, 121, 91, 0.18);
+      transform: rotate(-4deg);
     }
     .brand h1 {
       margin: 0;
       font-size: 18px;
       line-height: 1.1;
+      color: #253226;
     }
     .brand p {
       margin: 4px 0 0;
-      color: var(--muted);
+      color: #65735a;
       font-size: 13px;
     }
     .nav {
@@ -107,14 +154,19 @@ WEB_UI_HTML = r"""<!doctype html>
       align-items: center;
       justify-content: center;
       gap: 8px;
-      min-height: 38px;
-      padding: 0 12px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: rgba(255,255,255,0.72);
-      color: #263833;
+      min-height: 40px;
+      padding: 0 14px;
+      border: 2px solid rgba(111, 71, 44, 0.18);
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,248,220,0.9));
+      color: #31412e;
       font-size: 13px;
-      backdrop-filter: blur(16px);
+      box-shadow: 0 5px 0 rgba(111, 71, 44, 0.12);
+    }
+    .nav a:hover, .ghost-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 7px 0 rgba(111, 71, 44, 0.12);
     }
     .hero {
       display: grid;
@@ -124,34 +176,47 @@ WEB_UI_HTML = r"""<!doctype html>
     }
     .hero-main {
       min-height: 228px;
-      padding: 26px;
-      border: 1px solid rgba(255,255,255,0.72);
-      border-radius: 24px;
+      padding: 28px;
+      border: 3px solid rgba(111, 71, 44, 0.18);
+      border-radius: 34px 42px 30px 38px;
       background:
-        linear-gradient(120deg, rgba(255,255,255,0.9), rgba(255,255,255,0.66)),
-        linear-gradient(135deg, rgba(16,182,168,0.16), rgba(37,99,235,0.08));
+        radial-gradient(circle at 88% 12%, rgba(255, 231, 112, 0.5), transparent 26%),
+        radial-gradient(circle at 78% 76%, rgba(134, 213, 218, 0.45), transparent 30%),
+        linear-gradient(135deg, rgba(255, 252, 227, 0.96), rgba(240, 255, 233, 0.9));
       box-shadow: var(--shadow);
-      backdrop-filter: blur(24px);
       overflow: hidden;
       position: relative;
+    }
+    .hero-main::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 96px;
+      right: 28px;
+      bottom: 18px;
+      border-radius: 48% 52% 45% 55% / 56% 46% 54% 44%;
+      background:
+        radial-gradient(circle at 24% 44%, rgba(255,255,255,0.42) 0 16px, transparent 17px),
+        linear-gradient(150deg, rgba(95, 191, 128, 0.34), rgba(134, 213, 218, 0.38));
+      border: 2px dashed rgba(31, 121, 91, 0.18);
     }
     .hero-main::after {
       content: "";
       position: absolute;
-      width: 360px;
-      height: 360px;
-      right: -160px;
-      top: -180px;
+      width: 300px;
+      height: 300px;
+      right: -120px;
+      top: -128px;
       background:
-        conic-gradient(from 130deg, rgba(16,182,168,0), rgba(16,182,168,0.25), rgba(124,58,237,0.20), rgba(16,182,168,0));
-      filter: blur(22px);
-      opacity: 0.72;
+        conic-gradient(from 130deg, rgba(255, 231, 112, 0), rgba(255, 231, 112, 0.4), rgba(76, 142, 217, 0.18), rgba(57, 170, 112, 0.22), rgba(255, 231, 112, 0));
+      filter: blur(16px);
+      opacity: 0.85;
     }
     .kicker {
       margin: 0 0 12px;
-      color: var(--aqua);
+      color: var(--deep-leaf);
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
@@ -161,13 +226,15 @@ WEB_UI_HTML = r"""<!doctype html>
       max-width: 780px;
       margin: 0;
       font-size: clamp(32px, 5vw, 64px);
-      line-height: 0.95;
+      line-height: 1.02;
       letter-spacing: 0;
+      color: #223226;
+      text-shadow: 0 3px 0 rgba(255, 248, 220, 0.86);
     }
     .shiny-text {
       color: transparent;
       background:
-        linear-gradient(110deg, #10201c 0%, #10201c 34%, #ffffff 46%, #10b6a8 50%, #10201c 66%, #10201c 100%);
+        linear-gradient(110deg, #1f795b 0%, #1f795b 32%, #fff8dc 46%, #e2a744 50%, #1f795b 66%, #1f795b 100%);
       background-size: 280% 100%;
       background-clip: text;
       -webkit-background-clip: text;
@@ -184,7 +251,7 @@ WEB_UI_HTML = r"""<!doctype html>
       max-width: 720px;
       color: #52625e;
       font-size: 15px;
-      line-height: 1.75;
+      line-height: 1.8;
     }
     .hero-actions {
       position: relative;
@@ -200,22 +267,27 @@ WEB_UI_HTML = r"""<!doctype html>
       justify-content: center;
       gap: 8px;
       padding: 0 16px;
-      border-radius: 12px;
-      background: #10201c;
-      color: #ffffff;
-      font-weight: 800;
-      box-shadow: 0 14px 30px rgba(16, 32, 28, 0.24);
+      border: 2px solid rgba(111, 71, 44, 0.16);
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, #2e9165, #1f795b);
+      color: #fffbe8;
+      font-weight: 900;
+      box-shadow: 0 6px 0 rgba(31, 121, 91, 0.28), 0 16px 26px rgba(31, 121, 91, 0.18);
+    }
+    .primary-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 0 rgba(31, 121, 91, 0.24), 0 18px 28px rgba(31, 121, 91, 0.16);
     }
     .spotlight {
       position: relative;
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.78);
-      border-radius: 22px;
+      border: 3px solid rgba(111, 71, 44, 0.16);
+      border-radius: 30px 36px 28px 34px;
       background:
-        radial-gradient(360px circle at var(--x, 50%) var(--y, 50%), rgba(16,182,168,0.22), transparent 42%),
-        rgba(255,255,255,0.76);
+        radial-gradient(360px circle at var(--x, 50%) var(--y, 50%), rgba(255, 231, 112, 0.32), transparent 44%),
+        linear-gradient(180deg, rgba(255, 252, 231, 0.92), rgba(247, 255, 238, 0.9));
       box-shadow: var(--shadow);
-      backdrop-filter: blur(22px);
     }
     .insight-panel {
       padding: 20px;
@@ -227,6 +299,7 @@ WEB_UI_HTML = r"""<!doctype html>
     .insight-panel h2 {
       margin: 0;
       font-size: 18px;
+      color: #2c3a2b;
     }
     .insight-panel p {
       margin: 8px 0 0;
@@ -240,9 +313,12 @@ WEB_UI_HTML = r"""<!doctype html>
     }
     .signal {
       padding: 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.72);
-      border: 1px solid rgba(37,52,47,0.08);
+      border-radius: 20px 18px 22px 16px;
+      background:
+        radial-gradient(circle at 82% 18%, rgba(255,255,255,0.74), transparent 34%),
+        rgba(255, 248, 220, 0.82);
+      border: 2px solid rgba(111,71,44,0.12);
+      box-shadow: inset 0 -3px 0 rgba(111,71,44,0.05);
     }
     .signal strong {
       display: block;
@@ -262,11 +338,11 @@ WEB_UI_HTML = r"""<!doctype html>
       align-items: start;
     }
     .panel {
-      border: 1px solid rgba(255,255,255,0.72);
-      border-radius: 24px;
-      background: var(--panel);
+      border: 3px solid rgba(111, 71, 44, 0.16);
+      border-radius: 30px 36px 28px 34px;
+      background:
+        linear-gradient(180deg, rgba(255, 252, 231, 0.96), rgba(255, 248, 220, 0.9));
       box-shadow: var(--shadow);
-      backdrop-filter: blur(22px);
       min-width: 0;
     }
     .panel-header {
@@ -274,12 +350,16 @@ WEB_UI_HTML = r"""<!doctype html>
       justify-content: space-between;
       align-items: flex-start;
       gap: 14px;
-      padding: 18px 18px 12px;
-      border-bottom: 1px solid rgba(37, 52, 47, 0.1);
+      padding: 18px 18px 13px;
+      border-bottom: 2px dashed rgba(111, 71, 44, 0.18);
+      background:
+        radial-gradient(circle at 92% 22%, rgba(134, 213, 218, 0.28), transparent 20%),
+        linear-gradient(180deg, rgba(255,255,255,0.28), rgba(255,255,255,0));
     }
     .panel-header h2 {
       margin: 0;
       font-size: 16px;
+      color: #253226;
     }
     .panel-header p {
       margin: 6px 0 0;
@@ -299,7 +379,7 @@ WEB_UI_HTML = r"""<!doctype html>
     label {
       display: block;
       margin: 0 0 6px;
-      color: var(--muted);
+      color: #617058;
       font-size: 11px;
       font-weight: 800;
       letter-spacing: 0.06em;
@@ -307,11 +387,12 @@ WEB_UI_HTML = r"""<!doctype html>
     }
     input, select, textarea {
       width: 100%;
-      border: 1px solid rgba(37, 52, 47, 0.14);
-      border-radius: 12px;
-      background: rgba(255,255,255,0.86);
+      border: 2px solid rgba(111, 71, 44, 0.16);
+      border-radius: 18px 16px 20px 15px;
+      background: rgba(255,255,255,0.78);
       color: var(--ink);
       outline: none;
+      box-shadow: inset 0 2px 0 rgba(255,255,255,0.72);
     }
     input, select {
       min-height: 42px;
@@ -324,10 +405,13 @@ WEB_UI_HTML = r"""<!doctype html>
       font-family: "JetBrains Mono", Consolas, monospace;
       font-size: 13px;
       line-height: 1.62;
+      background:
+        linear-gradient(rgba(255,255,255,0.82), rgba(255,255,255,0.82)),
+        repeating-linear-gradient(180deg, transparent 0 27px, rgba(67, 200, 191, 0.14) 28px 29px);
     }
     input:focus, select:focus, textarea:focus {
-      border-color: rgba(16, 182, 168, 0.72);
-      box-shadow: 0 0 0 4px rgba(16, 182, 168, 0.12);
+      border-color: rgba(57, 170, 112, 0.72);
+      box-shadow: 0 0 0 4px rgba(255, 231, 112, 0.28), inset 0 2px 0 rgba(255,255,255,0.72);
     }
     .tabs, .run-row {
       display: flex;
@@ -341,16 +425,17 @@ WEB_UI_HTML = r"""<!doctype html>
     .tab-button {
       padding: 0 13px;
       border-radius: 999px;
-      border: 1px solid rgba(37, 52, 47, 0.12);
-      background: rgba(255,255,255,0.7);
+      border: 2px solid rgba(111, 71, 44, 0.14);
+      background: rgba(255,255,255,0.66);
       color: #273a35;
       font-size: 13px;
+      box-shadow: 0 4px 0 rgba(111, 71, 44, 0.08);
     }
     .tab-button.active {
-      background: #dffff8;
-      color: #075e55;
-      border-color: rgba(16,182,168,0.25);
-      font-weight: 800;
+      background: #d7f5bd;
+      color: #1f795b;
+      border-color: rgba(57,170,112,0.28);
+      font-weight: 900;
     }
     .run-row {
       justify-content: space-between;
@@ -360,8 +445,9 @@ WEB_UI_HTML = r"""<!doctype html>
       display: inline-flex;
       align-items: center;
       gap: 9px;
-      color: #40514c;
+      color: #465641;
       font-size: 13px;
+      font-weight: 800;
     }
     .toggle input {
       width: 17px;
@@ -376,15 +462,17 @@ WEB_UI_HTML = r"""<!doctype html>
       min-height: 36px;
       padding: 0 12px;
       border-radius: 999px;
-      background: #eef2f0;
-      color: #566762;
+      border: 2px solid rgba(111, 71, 44, 0.12);
+      background: #fff8dc;
+      color: #56644b;
       font-size: 12px;
       font-weight: 900;
       letter-spacing: 0.04em;
+      box-shadow: 0 5px 0 rgba(111, 71, 44, 0.1);
     }
-    .status-pill.pass { background: #daf8e9; color: #116b3f; }
-    .status-pill.fail { background: #fde2e2; color: #9f1d2c; }
-    .status-pill.work { background: #fff2cc; color: #8b5a08; }
+    .status-pill.pass { background: #c9f4d0; color: #1d6b45; }
+    .status-pill.fail { background: #ffd8d8; color: #9f1d2c; }
+    .status-pill.work { background: #ffe790; color: #765011; }
     .metric-grid {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -394,9 +482,12 @@ WEB_UI_HTML = r"""<!doctype html>
     .metric {
       min-height: 82px;
       padding: 13px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.72);
-      border: 1px solid rgba(37,52,47,0.1);
+      border-radius: 22px 18px 20px 16px;
+      background:
+        radial-gradient(circle at 85% 12%, rgba(255,255,255,0.7), transparent 34%),
+        rgba(255, 248, 220, 0.78);
+      border: 2px solid rgba(111,52,47,0.1);
+      box-shadow: inset 0 -4px 0 rgba(111, 71, 44, 0.05);
     }
     .metric span {
       display: block;
@@ -419,16 +510,18 @@ WEB_UI_HTML = r"""<!doctype html>
     }
     .mini-panel {
       min-width: 0;
-      border: 1px solid rgba(37,52,47,0.1);
-      border-radius: 18px;
-      background: rgba(255,255,255,0.64);
+      border: 2px solid rgba(111,71,44,0.14);
+      border-radius: 22px 18px 22px 18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,252,231,0.68));
       overflow: hidden;
     }
     .mini-panel h3 {
       margin: 0;
       padding: 13px 14px;
-      border-bottom: 1px solid rgba(37,52,47,0.09);
+      border-bottom: 2px dashed rgba(111,71,44,0.12);
       font-size: 13px;
+      color: #2c3a2b;
     }
     .empty {
       display: grid;
@@ -438,6 +531,8 @@ WEB_UI_HTML = r"""<!doctype html>
       color: var(--muted);
       text-align: center;
       line-height: 1.5;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(134, 213, 218, 0.12), transparent 36%);
     }
     table {
       width: 100%;
@@ -446,7 +541,7 @@ WEB_UI_HTML = r"""<!doctype html>
     }
     th, td {
       padding: 10px 12px;
-      border-bottom: 1px solid rgba(37,52,47,0.08);
+      border-bottom: 1px dashed rgba(111,71,44,0.12);
       text-align: left;
       vertical-align: top;
       overflow-wrap: anywhere;
@@ -457,6 +552,7 @@ WEB_UI_HTML = r"""<!doctype html>
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 0.04em;
+      background: rgba(255, 248, 220, 0.48);
     }
     .method {
       display: inline-flex;
@@ -464,13 +560,13 @@ WEB_UI_HTML = r"""<!doctype html>
       justify-content: center;
       border-radius: 8px;
       padding: 4px 7px;
-      background: #e5f3ff;
-      color: #1d4ed8;
+      background: #d9f4ff;
+      color: #27638f;
       font-weight: 900;
     }
     .method.post {
-      background: #dcfce7;
-      color: #15803d;
+      background: #d7f5bd;
+      color: #1f795b;
     }
     .report-bar {
       display: flex;
@@ -486,9 +582,9 @@ WEB_UI_HTML = r"""<!doctype html>
     iframe {
       width: 100%;
       height: 390px;
-      border: 1px solid rgba(37,52,47,0.13);
-      border-radius: 18px;
-      background: #ffffff;
+      border: 2px solid rgba(111,71,44,0.14);
+      border-radius: 22px 18px 22px 18px;
+      background: #fffdf2;
     }
     .error {
       margin: 12px 0 0;
@@ -645,9 +741,10 @@ Response Keys: order_id, status
             const dy = dot.y - pointer.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
             const heat = Math.max(0, 1 - dist / (180 * window.devicePixelRatio));
+            const leafTilt = Math.sin((dot.x + dot.y) * 0.002);
             ctx.beginPath();
-            ctx.arc(dot.x, dot.y, dot.base + heat * 2.4, 0, Math.PI * 2);
-            ctx.fillStyle = heat > 0 ? `rgba(16, 182, 168, ${0.12 + heat * 0.34})` : "rgba(23, 33, 31, 0.07)";
+            ctx.ellipse(dot.x, dot.y, dot.base + heat * 2.7, dot.base * 0.72 + heat * 1.4, leafTilt, 0, Math.PI * 2);
+            ctx.fillStyle = heat > 0 ? `rgba(57, 170, 112, ${0.14 + heat * 0.38})` : "rgba(111, 71, 44, 0.08)";
             ctx.fill();
           }
           raf = requestAnimationFrame(draw);
@@ -808,7 +905,7 @@ Response Keys: order_id, status
 
             <section className="hero">
               <div className="hero-main">
-                <p className="kicker">React Bits 风格界面</p>
+                <p className="kicker">岛屿手账风界面</p>
                 <h2 className="hero-title">
                   把接口需求变成<ShinyText>可执行测试</ShinyText>
                 </h2>
@@ -826,7 +923,7 @@ Response Keys: order_id, status
 
               <SpotlightCard className="insight-panel">
                 <div>
-                  <h2>这个页面展示什么</h2>
+                  <h2>测试岛公告板</h2>
                   <p>一条适合放进作品集的闭环流程：输入需求、解析接口、生成用例、执行状态和最终报告。</p>
                 </div>
                 <div className="signal-grid">
