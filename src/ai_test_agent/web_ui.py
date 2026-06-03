@@ -26,6 +26,10 @@ WEB_UI_HTML = r"""<!doctype html>
       --amber: #e2a744;
       --rose: #d65d64;
       --violet: #9071d8;
+      --sand: #f6e3af;
+      --sea: #7cc9d8;
+      --mint: #a7d9bd;
+      --leaf-pattern: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%233c9f86' stroke-opacity='.18' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 24c16 2 25 10 27 27-15-2-25-11-27-27Z'/%3E%3Cpath d='M23 28c8 8 13 14 18 23M30 31c-1 7-1 13 0 18M37 37c-1 6-1 10 0 15'/%3E%3Cpath d='M78 78c14 1 23 9 25 24-14-1-23-9-25-24Z'/%3E%3Cpath d='M82 82c7 7 12 13 17 20M90 85c-1 6-1 11 0 16'/%3E%3Cpath d='M78 18c8 4 12 10 12 20-9-3-14-10-12-20Z'/%3E%3Cpath d='M19 86c6-3 13-1 18 5-7 4-14 3-18-5Z'/%3E%3C/g%3E%3Cg fill='%23e9cf72' fill-opacity='.16'%3E%3Ccircle cx='58' cy='24' r='3'/%3E%3Ccircle cx='105' cy='48' r='2'/%3E%3Ccircle cx='53' cy='92' r='2.5'/%3E%3C/g%3E%3C/svg%3E");
       --shadow: 0 18px 0 rgba(111, 71, 44, 0.1), 0 28px 60px rgba(82, 102, 70, 0.18);
     }
     * { box-sizing: border-box; }
@@ -33,10 +37,12 @@ WEB_UI_HTML = r"""<!doctype html>
       margin: 0;
       min-height: 100vh;
       background:
+        var(--leaf-pattern),
         radial-gradient(circle at 12% 8%, rgba(255, 248, 220, 0.88), transparent 18%),
         radial-gradient(circle at 86% 10%, rgba(134, 213, 218, 0.46), transparent 22%),
         radial-gradient(circle at 18% 92%, rgba(57, 170, 112, 0.26), transparent 26%),
         linear-gradient(180deg, var(--sky) 0%, #edf9e9 44%, #c9e9ab 100%);
+      background-size: 120px 120px, auto, auto, auto, auto;
       color: var(--ink);
       font-family: Inter, "Microsoft YaHei", "PingFang SC", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       letter-spacing: 0;
@@ -53,8 +59,9 @@ WEB_UI_HTML = r"""<!doctype html>
     }
     body::before {
       top: 0;
-      height: 180px;
+      height: 210px;
       background:
+        radial-gradient(110px 34px at 52% 72%, rgba(255,255,255,0.76) 0 58%, transparent 60%),
         radial-gradient(circle at 12% 64%, rgba(255,255,255,0.9) 0 24px, transparent 25px),
         radial-gradient(circle at 17% 58%, rgba(255,255,255,0.86) 0 34px, transparent 35px),
         radial-gradient(circle at 72% 72%, rgba(255,255,255,0.72) 0 28px, transparent 29px),
@@ -62,12 +69,12 @@ WEB_UI_HTML = r"""<!doctype html>
       opacity: 0.78;
     }
     body::after {
-      bottom: -90px;
-      height: 270px;
+      bottom: -72px;
+      height: 320px;
       background:
-        radial-gradient(60% 90% at 14% 0%, rgba(68, 167, 112, 0.38), transparent 64%),
-        radial-gradient(68% 100% at 72% 8%, rgba(255, 230, 126, 0.36), transparent 62%),
-        radial-gradient(54% 80% at 46% 12%, rgba(134, 213, 218, 0.34), transparent 66%);
+        radial-gradient(54% 58% at 74% 28%, rgba(255, 233, 167, 0.52), transparent 64%),
+        radial-gradient(60% 90% at 14% 0%, rgba(68, 167, 112, 0.42), transparent 64%),
+        linear-gradient(180deg, transparent 0 18%, rgba(246, 227, 175, 0.58) 19% 35%, rgba(124, 201, 216, 0.34) 36% 100%);
       filter: blur(0.2px);
     }
     a { color: inherit; text-decoration: none; }
@@ -692,6 +699,7 @@ WEB_UI_HTML = r"""<!doctype html>
       font-weight: 800;
     }
     .desktop-frame {
+      position: relative;
       display: grid;
       grid-template-columns: 320px minmax(520px, 1fr) 330px;
       gap: 12px;
@@ -704,6 +712,26 @@ WEB_UI_HTML = r"""<!doctype html>
         radial-gradient(circle at 52% 24%, rgba(255, 234, 122, 0.18), transparent 24%);
       box-shadow: 0 24px 70px rgba(88, 94, 72, 0.16);
       backdrop-filter: blur(20px);
+      overflow: hidden;
+    }
+    .desktop-frame::before {
+      content: "";
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: -28px;
+      height: 150px;
+      border-radius: 48% 52% 0 0 / 38% 36% 0 0;
+      background:
+        radial-gradient(20px 10px at 18% 58%, rgba(255,255,255,0.58) 0 70%, transparent 72%),
+        radial-gradient(24px 12px at 64% 52%, rgba(255,255,255,0.5) 0 70%, transparent 72%),
+        linear-gradient(180deg, rgba(246, 227, 175, 0.48) 0 28%, rgba(120, 198, 214, 0.2) 29% 44%, rgba(61, 163, 139, 0.18) 45% 100%);
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .desktop-frame > * {
+      position: relative;
+      z-index: 1;
     }
     .side-dock,
     .workbench,
@@ -998,6 +1026,87 @@ WEB_UI_HTML = r"""<!doctype html>
       font-size: 13px;
       line-height: 1.55;
     }
+    .island-postcard {
+      position: relative;
+      min-height: 150px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(119, 100, 72, 0.14);
+      border-radius: 22px;
+      overflow: hidden;
+      background:
+        radial-gradient(80px 34px at 76% 28%, rgba(255,255,255,0.82) 0 42%, transparent 44%),
+        radial-gradient(54px 24px at 64% 30%, rgba(255,255,255,0.72) 0 44%, transparent 46%),
+        linear-gradient(180deg, #90d4ec 0 44%, #f8e6b8 45% 62%, #71cbd6 63% 100%);
+      box-shadow: 0 4px 0 rgba(119, 100, 72, 0.08);
+    }
+    .island-postcard::before {
+      content: "";
+      position: absolute;
+      left: -18px;
+      right: -18px;
+      bottom: 36px;
+      height: 42px;
+      border-radius: 50%;
+      background:
+        radial-gradient(16px 8px at 24% 48%, rgba(255,255,255,0.82) 0 70%, transparent 72%),
+        radial-gradient(24px 10px at 62% 54%, rgba(255,255,255,0.74) 0 70%, transparent 72%),
+        rgba(255,255,255,0.52);
+    }
+    .island-postcard::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 40px;
+      background:
+        var(--leaf-pattern),
+        linear-gradient(180deg, #7ccf80, #5ebf74);
+      background-size: 86px 86px, auto;
+    }
+    .wood-sign {
+      position: absolute;
+      left: 16px;
+      top: 18px;
+      z-index: 1;
+      padding: 8px 12px;
+      border-radius: 10px 12px 9px 13px;
+      background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.08) 0 5px, rgba(95, 54, 28, 0.08) 5px 9px),
+        linear-gradient(180deg, #bd8150, #8c5b37);
+      color: #fff5ce;
+      font-size: 14px;
+      font-weight: 900;
+      box-shadow: 0 5px 0 rgba(95, 54, 28, 0.22);
+    }
+    .postcard-chip {
+      position: absolute;
+      right: 14px;
+      bottom: 12px;
+      z-index: 1;
+      min-height: 30px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255, 253, 244, 0.88);
+      color: #267b70;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 3px 0 rgba(119, 100, 72, 0.12);
+    }
+    .island-stamp {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 16px 18px 15px 19px;
+      background:
+        radial-gradient(circle at 32% 24%, rgba(255,255,255,0.72), transparent 36%),
+        linear-gradient(145deg, #f7d86b, #35bda7);
+      color: #fffaf0;
+      font-size: 18px;
+      font-weight: 900;
+      box-shadow: 0 5px 0 rgba(119, 100, 72, 0.12);
+    }
     .asset-card.feature {
       min-height: 210px;
       display: grid;
@@ -1039,6 +1148,222 @@ WEB_UI_HTML = r"""<!doctype html>
     .console-card .result-grid {
       margin-bottom: 14px;
     }
+    .console-toolbar,
+    .artifact-actions,
+    .record-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .console-toolbar {
+      justify-content: flex-end;
+    }
+    .artifact-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 11px;
+      border: 1px solid rgba(119, 100, 72, 0.14);
+      border-radius: 999px;
+      background: rgba(255, 253, 244, 0.86);
+      color: #537162;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 3px 0 rgba(119, 100, 72, 0.08);
+    }
+    .artifact-link.primary {
+      background: #d8f6ed;
+      color: #168a7d;
+      border-color: rgba(37, 185, 170, 0.28);
+    }
+    .platform-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding-bottom: 4px;
+      overflow-x: auto;
+    }
+    .platform-tab {
+      min-width: max-content;
+      min-height: 38px;
+      padding: 0 13px;
+      border: 1px solid rgba(119, 100, 72, 0.14);
+      border-radius: 999px;
+      background: rgba(255, 253, 244, 0.78);
+      color: #756c59;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 3px 0 rgba(119, 100, 72, 0.07);
+    }
+    .platform-tab.active {
+      background: linear-gradient(180deg, #46cbbd, #25b9aa);
+      color: #ffffff;
+      border-color: rgba(37, 185, 170, 0.34);
+      box-shadow: 0 4px 0 rgba(32, 139, 127, 0.18);
+    }
+    .tab-pane {
+      min-height: 260px;
+    }
+    .pane-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .pane-heading h3 {
+      margin: 0;
+      color: #3f382d;
+      font-size: 15px;
+    }
+    .pane-heading p {
+      margin: 4px 0 0;
+      color: #847b66;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid rgba(119, 100, 72, 0.12);
+      border-radius: 16px;
+      background: rgba(255, 253, 244, 0.6);
+    }
+    .table-wrap table {
+      min-width: 620px;
+    }
+    .test-point-list {
+      display: grid;
+      gap: 8px;
+    }
+    .test-point {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 11px;
+      border: 1px solid rgba(119, 100, 72, 0.12);
+      border-radius: 16px;
+      background: rgba(255, 253, 244, 0.72);
+    }
+    .point-index {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 13px;
+      background: #d8f6ed;
+      color: #1c8a7c;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .test-point strong {
+      display: block;
+      color: #4a4134;
+      font-size: 13px;
+    }
+    .test-point p {
+      margin: 4px 0 0;
+      color: #817762;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .risk-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 52px;
+      min-height: 28px;
+      padding: 0 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .risk-badge.low { background: #d8f6ed; color: #168a7d; }
+    .risk-badge.medium { background: #fff0ba; color: #9a6a0c; }
+    .risk-badge.high { background: #ffe1dc; color: #b0493c; }
+    .insight-box {
+      margin-bottom: 12px;
+      padding: 13px;
+      border: 1px solid rgba(119, 100, 72, 0.12);
+      border-left: 5px solid #e8bf4f;
+      border-radius: 16px;
+      background: rgba(255, 248, 214, 0.62);
+    }
+    .insight-box.pass {
+      border-left-color: #43c8bf;
+      background: rgba(216, 246, 237, 0.58);
+    }
+    .insight-box h3 {
+      margin: 0;
+      color: #4c4334;
+      font-size: 14px;
+    }
+    .insight-box p {
+      margin: 6px 0 0;
+      color: #796e59;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .failure-list {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .failure-item {
+      padding: 11px;
+      border: 1px solid rgba(214, 93, 100, 0.2);
+      border-radius: 14px;
+      background: rgba(255, 225, 220, 0.56);
+    }
+    .failure-item strong {
+      display: block;
+      color: #a44148;
+      font-size: 12px;
+    }
+    .failure-item p {
+      margin: 5px 0 0;
+      color: #7f5c59;
+      font-size: 12px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+    .execution-log {
+      max-height: 280px;
+      margin: 0;
+      padding: 13px;
+      overflow: auto;
+      border-radius: 15px;
+      background: #31423a;
+      color: #f6f3dd;
+      font-family: "JetBrains Mono", Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+    .record-meta {
+      margin-bottom: 12px;
+    }
+    .record-meta span {
+      min-height: 32px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255, 253, 244, 0.8);
+      color: #766d5b;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .artifact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .artifact-grid .artifact-link {
+      min-height: 44px;
+      border-radius: 14px;
+    }
     @media (max-width: 1080px) {
       .desktop-topbar { grid-template-columns: auto 1fr; }
       .model-stack, .clock { display: none; }
@@ -1059,6 +1384,9 @@ WEB_UI_HTML = r"""<!doctype html>
       .flow-strip, .mimo-tabs, .task-grid, .asset-metrics { grid-template-columns: 1fr 1fr; }
       .hero-main { padding: 20px; }
       .metric-grid, .signal-grid { grid-template-columns: 1fr 1fr; }
+      .artifact-grid { grid-template-columns: 1fr; }
+      .test-point { grid-template-columns: 34px minmax(0, 1fr); }
+      .test-point .risk-badge { grid-column: 2; justify-self: start; }
       textarea { min-height: 320px; }
     }
   </style>
@@ -1269,6 +1597,7 @@ Response Keys: order_id, status
       const [error, setError] = useState("");
       const [running, setRunning] = useState(false);
       const [clockText, setClockText] = useState("");
+      const [activeResultTab, setActiveResultTab] = useState("points");
 
       useEffect(() => {
         const updateClock = () => {
@@ -1346,6 +1675,7 @@ Response Keys: order_id, status
           }
           setResult(data);
           setStatus(data.execution ? (data.execution.success ? "PASS" : "FAIL") : "GENERATED");
+          setActiveResultTab("points");
         } catch (err) {
           setError(err.message);
           setStatus("ERROR");
@@ -1355,7 +1685,17 @@ Response Keys: order_id, status
       };
 
       const endpoints = result?.suite?.analysis?.endpoints || [];
+      const testPoints = result?.suite?.analysis?.test_points || [];
       const cases = result?.suite?.test_cases || [];
+      const failures = execution?.failures || [];
+      const passRate = execution?.total ? `${Math.round((execution.passed / execution.total) * 100)}%` : "-";
+      const suiteUrl = result ? artifactUrl(`${outputDir}/suite.json`) : "";
+      const testFileUrl = result?.test_file ? artifactUrl(result.test_file) : "";
+      const markdownReportUrl = result?.markdown_report ? artifactUrl(result.markdown_report) : "";
+      const junitUrl = execution?.junit_xml ? artifactUrl(execution.junit_xml) : "";
+      const riskLabels = { low: "低风险", medium: "中风险", high: "高风险" };
+      const categoryLabels = { positive: "正向", boundary: "边界", negative: "异常", security: "安全" };
+      const highRiskPoints = testPoints.filter((point) => point.risk_level === "high").length;
 
       return (
         <>
@@ -1496,63 +1836,181 @@ Response Keys: order_id, status
 
                 <section className="console-card">
                   <div className="console-head">
-                    <div><strong>执行结果</strong><span> {summary}</span></div>
-                    {reportUrl && <a className="ghost-button" href={reportPreview} target="_blank" rel="noreferrer">打开报告</a>}
+                    <div><strong>测试管理台</strong><span> {summary}</span></div>
+                    <div className="console-toolbar">
+                      {suiteUrl && <a className="artifact-link" href={suiteUrl} download>下载 suite.json</a>}
+                      {reportUrl && <a className="artifact-link primary" href={reportPreview} target="_blank" rel="noreferrer">打开 HTML 报告</a>}
+                    </div>
                   </div>
                   <div className="console-body">
                     <div className="metric-grid">
-                      <Metric label="用例总数" value={execution ? execution.total : cases.length} />
-                      <Metric label="通过" value={execution ? execution.passed : 0} />
-                      <Metric label="失败" value={execution ? execution.failed : 0} />
-                      <Metric label="错误" value={execution ? execution.errors : 0} />
-                      <Metric label="耗时" value={execution ? `${execution.duration_seconds.toFixed(2)}s` : "-"} />
+                      <Metric label="接口" value={endpoints.length} />
+                      <Metric label="测试点" value={testPoints.length} />
+                      <Metric label="用例" value={cases.length} />
+                      <Metric label="通过率" value={passRate} />
+                      <Metric label="报告" value={reportUrl ? 1 : 0} />
                     </div>
 
-                    <div className="result-grid">
-                      <div className="mini-panel">
-                        <h3>接口列表</h3>
+                    <div className="platform-tabs">
+                      <button className={`platform-tab ${activeResultTab === "points" ? "active" : ""}`} onClick={() => setActiveResultTab("points")}>AI 测试点 {testPoints.length}</button>
+                      <button className={`platform-tab ${activeResultTab === "cases" ? "active" : ""}`} onClick={() => setActiveResultTab("cases")}>测试用例 {cases.length}</button>
+                      <button className={`platform-tab ${activeResultTab === "contracts" ? "active" : ""}`} onClick={() => setActiveResultTab("contracts")}>接口契约 {endpoints.length}</button>
+                      <button className={`platform-tab ${activeResultTab === "execution" ? "active" : ""}`} onClick={() => setActiveResultTab("execution")}>执行记录 {execution ? 1 : 0}</button>
+                      <button className={`platform-tab ${activeResultTab === "report" ? "active" : ""}`} onClick={() => setActiveResultTab("report")}>测试报告 {reportUrl ? 1 : 0}</button>
+                    </div>
+
+                    {activeResultTab === "points" && (
+                      <div className="tab-pane">
+                        <div className="pane-heading">
+                          <div>
+                            <h3>AI 测试点脑图</h3>
+                            <p>从需求文档提取功能、边界和异常关注点，按风险等级整理。</p>
+                          </div>
+                        </div>
+                        {testPoints.length === 0 ? (
+                          <div className="empty">运行 Agent 后，这里会生成可解释的测试点树。</div>
+                        ) : (
+                          <div className="test-point-list">
+                            {testPoints.map((point, index) => (
+                              <div className="test-point" key={point.id}>
+                                <span className="point-index">{index + 1}</span>
+                                <div>
+                                  <strong>{point.feature}</strong>
+                                  <p>{point.description}</p>
+                                </div>
+                                <span className={`risk-badge ${point.risk_level}`}>{riskLabels[point.risk_level] || point.risk_level}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {activeResultTab === "cases" && (
+                      <div className="tab-pane">
+                        <div className="pane-heading">
+                          <div>
+                            <h3>结构化测试用例</h3>
+                            <p>覆盖正向、异常和边界场景，可继续生成 pytest 自动化脚本。</p>
+                          </div>
+                          {testFileUrl && <a className="artifact-link" href={testFileUrl} download>下载 pytest</a>}
+                        </div>
+                        {cases.length === 0 ? (
+                          <div className="empty">运行 Agent 后，这里会展示生成的结构化用例。</div>
+                        ) : (
+                          <div className="table-wrap">
+                            <table>
+                              <thead><tr><th>ID</th><th>类别</th><th>优先级</th><th>请求</th><th>预期状态</th></tr></thead>
+                              <tbody>
+                                {cases.map((item) => (
+                                  <tr key={item.id}>
+                                    <td>{item.id}</td>
+                                    <td>{categoryLabels[item.category] || item.category}</td>
+                                    <td>{item.priority}</td>
+                                    <td>{item.method} {item.path}</td>
+                                    <td>{item.expected_status}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {activeResultTab === "contracts" && (
+                      <div className="tab-pane">
+                        <div className="pane-heading">
+                          <div>
+                            <h3>接口契约</h3>
+                            <p>展示 Agent 从 Markdown 或 OpenAPI 中解析出的接口定义。</p>
+                          </div>
+                        </div>
                         {endpoints.length === 0 ? (
                           <div className="empty">运行 Agent 后，这里会展示解析出的 API 契约。</div>
                         ) : (
+                          <div className="table-wrap">
                           <table>
-                            <thead><tr><th>方法</th><th>路径</th><th>成功状态码</th></tr></thead>
+                            <thead><tr><th>方法</th><th>路径</th><th>名称</th><th>成功状态码</th><th>必填字段</th></tr></thead>
                             <tbody>
                               {endpoints.map((item, index) => (
                                 <tr key={`${item.method}-${item.path}-${index}`}>
                                   <td><span className={`method ${item.method.toLowerCase()}`}>{item.method}</span></td>
                                   <td>{item.path}</td>
+                                  <td>{item.name}</td>
                                   <td>{item.success_status}</td>
+                                  <td>{item.required_fields?.join(", ") || "-"}</td>
                                 </tr>
                               ))}
                             </tbody>
                           </table>
+                          </div>
                         )}
                       </div>
+                    )}
 
-                      <div className="mini-panel">
-                        <h3>测试用例</h3>
-                        {cases.length === 0 ? (
-                          <div className="empty">生成的正向、异常和边界类用例会显示在这里。</div>
+                    {activeResultTab === "execution" && (
+                      <div className="tab-pane">
+                        <div className="pane-heading">
+                          <div>
+                            <h3>执行记录与 AI 风险洞察</h3>
+                            <p>根据 pytest 的真实结果整理失败摘要，方便继续定位问题。</p>
+                          </div>
+                          {junitUrl && <a className="artifact-link" href={junitUrl} download>下载 JUnit XML</a>}
+                        </div>
+                        {!execution ? (
+                          <div className="empty">开启“执行生成的 pytest”后运行 Agent，这里会显示执行日志。</div>
                         ) : (
-                          <table>
-                            <thead><tr><th>ID</th><th>请求</th><th>预期状态</th></tr></thead>
-                            <tbody>
-                              {cases.map((item) => (
-                                <tr key={item.id}>
-                                  <td>{item.id}</td>
-                                  <td>{item.method} {item.path}</td>
-                                  <td>{item.expected_status}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
+                          <>
+                            <div className={`insight-box ${execution.success ? "pass" : ""}`}>
+                              <h3>{execution.success ? "本次执行未发现失败" : `发现 ${failures.length} 个疑似缺陷`}</h3>
+                              <p>{execution.success ? `共执行 ${execution.total} 条用例，全部通过。可以继续补充边界需求或导出报告。` : "优先检查失败用例的请求参数、预期状态码和接口实现，再根据日志复现。"}</p>
+                            </div>
+                            {failures.length > 0 && (
+                              <div className="failure-list">
+                                {failures.map((failure, index) => (
+                                  <div className="failure-item" key={`${failure.name}-${index}`}>
+                                    <strong>{failure.name}</strong>
+                                    <p>{failure.message}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            <div className="record-meta">
+                              <span>通过 {execution.passed}</span>
+                              <span>失败 {execution.failed}</span>
+                              <span>错误 {execution.errors}</span>
+                              <span>跳过 {execution.skipped}</span>
+                              <span>耗时 {execution.duration_seconds.toFixed(2)}s</span>
+                            </div>
+                            <pre className="execution-log">{execution.stdout || execution.stderr || "无执行输出"}</pre>
+                          </>
                         )}
                       </div>
-                    </div>
-                    {reportUrl ? (
-                      <iframe src={reportPreview} title="生成的测试报告" />
-                    ) : (
-                      <div className="empty">运行完成后，这里会预览生成的 HTML 测试报告。</div>
+                    )}
+
+                    {activeResultTab === "report" && (
+                      <div className="tab-pane">
+                        <div className="pane-heading">
+                          <div>
+                            <h3>测试报告与归档</h3>
+                            <p>预览 HTML 报告，也可以下载生成的测试资产用于提交或复盘。</p>
+                          </div>
+                        </div>
+                        {reportUrl ? (
+                          <>
+                            <iframe src={reportPreview} title="生成的测试报告" />
+                            <div className="artifact-grid">
+                              <a className="artifact-link primary" href={reportUrl} download>下载 HTML 报告</a>
+                              <a className="artifact-link" href={markdownReportUrl} download>下载 Markdown 报告</a>
+                              <a className="artifact-link" href={suiteUrl} download>下载 suite.json</a>
+                              <a className="artifact-link" href={testFileUrl} download>下载 pytest 脚本</a>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="empty">运行完成后，这里会预览并归档生成的测试报告。</div>
+                        )}
+                      </div>
                     )}
                     {error && <p className="error">{error}</p>}
                   </div>
@@ -1565,6 +2023,10 @@ Response Keys: order_id, status
                   <span>上下文 {endpoints.length}</span>
                   <span>变更 0</span>
                   <span>任务 {status === "IDLE" ? 0 : 1}</span>
+                </div>
+                <div className="island-postcard" aria-hidden="true">
+                  <div className="wood-sign">测试岛</div>
+                  <div className="postcard-chip">AI QA 航线</div>
                 </div>
                 <div className="asset-card">
                   <h3>资产码头</h3>
@@ -1590,6 +2052,21 @@ Response Keys: order_id, status
                   <h3>能力状态</h3>
                   <p>入口 {inputFormat === "openapi" ? "OpenAPI" : "Markdown"}，授权可执行，结果回到当前工作台。</p>
                 </div>
+                <div className={`insight-box ${execution?.success ? "pass" : ""}`}>
+                  <h3>AI 风险雷达</h3>
+                  <p>{result ? `识别 ${testPoints.length} 个测试点，其中 ${highRiskPoints} 个高风险关注点；当前执行失败 ${failures.length} 项。` : "运行 Agent 后，这里会汇总需求风险和执行失败。"}</p>
+                </div>
+                {result && (
+                  <div className="asset-card">
+                    <h3>下载测试资产</h3>
+                    <div className="artifact-grid">
+                      <a className="artifact-link" href={suiteUrl} download>suite.json</a>
+                      <a className="artifact-link" href={testFileUrl} download>pytest 脚本</a>
+                      <a className="artifact-link" href={markdownReportUrl} download>Markdown</a>
+                      <a className="artifact-link primary" href={reportUrl} download>HTML 报告</a>
+                    </div>
+                  </div>
+                )}
               </aside>
             </section>
           </div>
