@@ -1536,6 +1536,201 @@ WEB_UI_HTML = r"""<!doctype html>
       min-height: 44px;
       border-radius: 14px;
     }
+    /* Sticker button layer inspired by island UI, without using copyrighted assets. */
+    .ability-tabs button,
+    .mimo-tab,
+    .mini-action,
+    .platform-tab,
+    .artifact-link,
+    .task-card,
+    .ghost-button {
+      position: relative;
+      overflow: hidden;
+      border-width: 2px;
+      border-style: solid;
+      border-color: rgba(255, 253, 244, 0.94);
+      outline: 1px solid rgba(107, 78, 55, 0.11);
+      background:
+        radial-gradient(circle at 22% 20%, rgba(255, 255, 255, 0.78), transparent 23%),
+        linear-gradient(180deg, rgba(255, 253, 244, 0.98), rgba(255, 246, 221, 0.9));
+      box-shadow:
+        0 4px 0 rgba(110, 87, 55, 0.14),
+        0 10px 18px rgba(79, 58, 38, 0.06);
+    }
+    .ability-tabs button,
+    .mimo-tab,
+    .mini-action,
+    .platform-tab,
+    .artifact-link {
+      padding-left: 28px;
+    }
+    .artifact-link {
+      white-space: nowrap;
+    }
+    .ability-tabs button::before,
+    .mimo-tab::before,
+    .mini-action:not(.active)::before,
+    .platform-tab::before,
+    .artifact-link:not(.primary)::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      width: 9px;
+      height: 9px;
+      pointer-events: none;
+      transform: translateY(-50%) rotate(18deg);
+      background: #43c8bf;
+      clip-path: polygon(50% 0, 62% 34%, 98% 34%, 68% 55%, 80% 91%, 50% 70%, 20% 91%, 32% 55%, 2% 34%, 38% 34%);
+      opacity: 0.62;
+      filter: drop-shadow(0 1px 0 rgba(37, 133, 121, 0.16));
+    }
+    .primary-button,
+    .task-card.primary-task,
+    .mini-action.active,
+    .artifact-link.primary {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      border: 3px solid rgba(255, 253, 244, 0.98);
+      outline: 2px solid rgba(74, 35, 103, 0.12);
+      background:
+        radial-gradient(circle at 16% 17%, rgba(255, 255, 255, 0.42), transparent 24%),
+        linear-gradient(135deg, #28164f 0%, #3a1d67 40%, #5c2d8b 64%, #f1a13d 65%, #ffd24a 100%);
+      color: #fff8dc;
+      text-shadow: 0 1px 0 rgba(49, 24, 83, 0.2);
+      box-shadow:
+        0 5px 0 rgba(66, 35, 106, 0.28),
+        0 15px 24px rgba(75, 48, 112, 0.18);
+    }
+    .primary-button,
+    .mini-action.active,
+    .artifact-link.primary {
+      min-height: 40px;
+      padding-right: 40px;
+    }
+    .artifact-link.primary {
+      padding-left: 16px;
+      padding-right: 34px;
+    }
+    .artifact-grid .artifact-link.primary {
+      padding-left: 10px;
+      padding-right: 28px;
+      font-size: 11px;
+    }
+    .primary-button::before,
+    .mini-action.active::before,
+    .artifact-link.primary::before {
+      content: "";
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      width: 15px;
+      height: 15px;
+      pointer-events: none;
+      transform: translateY(-50%) rotate(10deg);
+      background: #ffd53f;
+      clip-path: polygon(50% 0, 62% 34%, 98% 34%, 68% 55%, 80% 91%, 50% 70%, 20% 91%, 32% 55%, 2% 34%, 38% 34%);
+      filter: drop-shadow(0 1px 0 rgba(93, 47, 18, 0.24));
+    }
+    .artifact-link.primary::before {
+      right: 10px;
+      width: 13px;
+      height: 13px;
+    }
+    .task-card.primary-task {
+      padding-right: 58px;
+    }
+    .task-card.primary-task::before {
+      content: "";
+      position: absolute;
+      right: 14px;
+      top: 13px;
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+      transform: rotate(14deg);
+      background: #ffd53f;
+      clip-path: polygon(50% 0, 62% 34%, 98% 34%, 68% 55%, 80% 91%, 50% 70%, 20% 91%, 32% 55%, 2% 34%, 38% 34%);
+      filter: drop-shadow(0 1px 0 rgba(93, 47, 18, 0.22));
+    }
+    .task-card.primary-task::after {
+      content: "";
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      width: 23px;
+      height: 23px;
+      pointer-events: none;
+      border: 3px solid rgba(255, 184, 33, 0.94);
+      border-radius: 999px;
+      background:
+        radial-gradient(circle, #ffe477 0 34%, #ffb230 36% 58%, #e87828 61% 100%);
+      box-shadow: inset 0 0 0 2px rgba(255, 249, 215, 0.72);
+    }
+    .task-card strong,
+    .task-card span {
+      position: relative;
+      z-index: 1;
+    }
+    .ability-tabs button.active,
+    .mimo-tab.active,
+    .platform-tab.active {
+      padding-right: 28px;
+      border-color: rgba(255, 253, 244, 0.98);
+      outline: 2px solid rgba(37, 185, 170, 0.13);
+      background:
+        radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.64), transparent 24%),
+        linear-gradient(145deg, #65dfd0, #28bdaa);
+      box-shadow:
+        0 5px 0 rgba(32, 139, 127, 0.18),
+        0 14px 20px rgba(45, 165, 151, 0.12);
+    }
+    .ability-tabs button.active::after,
+    .mimo-tab.active::after,
+    .platform-tab.active::after {
+      content: "";
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      width: 10px;
+      height: 10px;
+      pointer-events: none;
+      border: 2px solid rgba(255, 246, 219, 0.9);
+      border-radius: 999px;
+      background: #ffd14b;
+      transform: translateY(-50%);
+      box-shadow: inset 0 0 0 1px rgba(232, 144, 34, 0.46);
+    }
+    .task-card:not(.primary-task):hover,
+    .ability-tabs button:hover,
+    .mimo-tab:hover,
+    .mini-action:hover,
+    .platform-tab:hover,
+    .artifact-link:hover,
+    .ghost-button:hover,
+    .primary-button:hover {
+      transform: translateY(-1px) rotate(-0.2deg);
+      box-shadow:
+        0 6px 0 rgba(110, 87, 55, 0.13),
+        0 14px 22px rgba(79, 58, 38, 0.08);
+    }
+    .primary-button:hover,
+    .task-card.primary-task:hover,
+    .mini-action.active:hover,
+    .artifact-link.primary:hover {
+      box-shadow:
+        0 7px 0 rgba(66, 35, 106, 0.25),
+        0 18px 28px rgba(75, 48, 112, 0.18);
+    }
+    .primary-button:disabled,
+    .task-card:disabled,
+    .mini-action:disabled {
+      cursor: not-allowed;
+      filter: saturate(0.72);
+      opacity: 0.62;
+      transform: none;
+    }
     @media (max-width: 1080px) {
       .desktop-topbar { grid-template-columns: auto 1fr; }
       .model-stack, .clock { display: none; }
