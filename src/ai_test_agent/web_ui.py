@@ -804,7 +804,7 @@ WEB_UI_HTML = r"""<!doctype html>
     .side-card {
       position: relative;
       display: grid;
-      grid-template-columns: 40px 1fr;
+      grid-template-columns: 46px 1fr;
       gap: 10px;
       align-items: center;
       min-height: 70px;
@@ -828,7 +828,6 @@ WEB_UI_HTML = r"""<!doctype html>
       font-size: 12px;
       line-height: 1.35;
     }
-    .side-card .icon,
     .asset-icon,
     .work-avatar {
       display: grid;
@@ -840,9 +839,182 @@ WEB_UI_HTML = r"""<!doctype html>
       color: #2a7f72;
       font-weight: 900;
     }
-    .side-card .icon {
-      width: 38px;
-      height: 38px;
+    .island-icon {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 253, 244, 0.78);
+      border-radius: 17px 19px 15px 18px;
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,0.74), transparent 34%),
+        linear-gradient(145deg, #c9f4d8, #74d9ca);
+      box-shadow: 0 5px 0 rgba(119, 100, 72, 0.12), inset 0 -4px 0 rgba(36, 139, 124, 0.08);
+    }
+    .island-icon.large {
+      width: 54px;
+      height: 54px;
+      border-radius: 21px 24px 19px 23px;
+    }
+    .island-icon::before,
+    .island-icon::after,
+    .island-icon span {
+      content: "";
+      position: absolute;
+      display: block;
+    }
+    .island-icon.api::before {
+      width: 28px;
+      height: 20px;
+      border-radius: 7px 8px 6px 9px;
+      background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.12) 0 4px, rgba(88,48,24,0.1) 4px 7px),
+        linear-gradient(180deg, #bd8150, #8d5b36);
+      box-shadow: 0 3px 0 rgba(107, 66, 38, 0.24);
+      transform: rotate(-6deg);
+    }
+    .island-icon.api::after {
+      width: 20px;
+      height: 2px;
+      border-radius: 999px;
+      background: rgba(255, 247, 209, 0.95);
+      box-shadow: 0 6px 0 rgba(255, 247, 209, 0.95);
+      transform: rotate(-6deg);
+    }
+    .island-icon.api span {
+      width: 5px;
+      height: 5px;
+      right: 8px;
+      bottom: 8px;
+      border-radius: 999px;
+      background: #f4d76a;
+      box-shadow: -8px -8px 0 #f4d76a, -16px -2px 0 #f4d76a;
+    }
+    .island-icon.ci {
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,0.74), transparent 34%),
+        linear-gradient(145deg, #f8df7d, #53c6a6);
+    }
+    .island-icon.ci::before {
+      width: 23px;
+      height: 23px;
+      border: 4px solid #fff8dc;
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 4px rgba(43, 134, 116, 0.78);
+    }
+    .island-icon.ci::after {
+      width: 30px;
+      height: 5px;
+      border-radius: 999px;
+      background: #2f8c7b;
+      transform: rotate(-35deg);
+    }
+    .island-icon.asset::before {
+      width: 29px;
+      height: 25px;
+      border-radius: 50% 50% 45% 45%;
+      background:
+        radial-gradient(circle at 20% 18%, rgba(255,255,255,0.84) 0 8px, transparent 9px),
+        repeating-radial-gradient(circle at 50% 84%, rgba(255,255,255,0.58) 0 2px, transparent 2px 5px),
+        linear-gradient(145deg, #f7d88a, #eaa06f);
+      transform: rotate(8deg);
+    }
+    .island-icon.asset::after {
+      width: 26px;
+      height: 7px;
+      bottom: 10px;
+      border-radius: 999px;
+      background: rgba(121, 83, 45, 0.18);
+    }
+    .island-icon.context::before {
+      width: 30px;
+      height: 24px;
+      border-radius: 7px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.34) 0 33%, transparent 33% 36%, rgba(255,255,255,0.24) 36% 66%, transparent 66% 69%, rgba(255,255,255,0.18) 69%),
+        linear-gradient(145deg, #fff5be, #8fd9c0);
+      box-shadow: 0 3px 0 rgba(119, 100, 72, 0.12);
+      transform: rotate(-4deg);
+    }
+    .island-icon.context::after {
+      width: 9px;
+      height: 9px;
+      top: 10px;
+      left: 20px;
+      border-radius: 50% 50% 50% 0;
+      background: #e46f62;
+      transform: rotate(-45deg);
+    }
+    .island-icon.task::before {
+      width: 3px;
+      height: 28px;
+      left: 15px;
+      top: 8px;
+      border-radius: 999px;
+      background: #7b5b3b;
+    }
+    .island-icon.task::after {
+      width: 22px;
+      height: 16px;
+      left: 17px;
+      top: 9px;
+      border-radius: 5px 9px 8px 4px;
+      background:
+        radial-gradient(circle at 70% 40%, rgba(255,255,255,0.44), transparent 30%),
+        linear-gradient(145deg, #ff8f63, #f1c85b);
+      transform: rotate(3deg);
+    }
+    .island-icon.agent::before {
+      width: 32px;
+      height: 26px;
+      border-radius: 45% 55% 50% 50%;
+      background:
+        radial-gradient(circle at 32% 42%, #2d7d72 0 3px, transparent 4px),
+        radial-gradient(circle at 66% 42%, #2d7d72 0 3px, transparent 4px),
+        linear-gradient(145deg, #fff5c8 0 45%, #8edbd1 46% 100%);
+      box-shadow: 0 4px 0 rgba(43, 121, 109, 0.16);
+    }
+    .island-icon.agent::after {
+      width: 24px;
+      height: 7px;
+      bottom: 8px;
+      border-radius: 999px;
+      background: rgba(45, 125, 114, 0.22);
+    }
+    .island-icon.agent span {
+      width: 18px;
+      height: 10px;
+      top: 8px;
+      left: 10px;
+      border-radius: 9px 9px 5px 5px;
+      background:
+        radial-gradient(circle at 72% 38%, #f4d76a 0 3px, transparent 4px),
+        linear-gradient(145deg, #47c7b6, #2c9183);
+      transform: rotate(-8deg);
+    }
+    .island-icon.run::before {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #62c8ff, #4dc7a0);
+      box-shadow: inset 0 -3px 0 rgba(20, 99, 95, 0.14);
+    }
+    .island-icon.run::after {
+      width: 0;
+      height: 0;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-left: 12px solid #fff8dc;
+      left: 18px;
+      top: 14px;
+    }
+    .work-heading .island-icon.large {
+      justify-self: center;
+    }
+    .asset-card.feature .island-icon {
+      margin: 0 auto 12px;
     }
     .side-card.muted {
       border-left-color: rgba(142, 126, 218, 0.6);
@@ -1586,6 +1758,10 @@ Response Keys: order_id, status
       );
     }
 
+    function IslandIcon({ type, label, large = false }) {
+      return <span className={`island-icon ${type} ${large ? "large" : ""}`} role="img" aria-label={label}><span></span></span>;
+    }
+
     function App() {
       const [text, setText] = useState(markdownSample);
       const [inputFormat, setInputFormat] = useState("text");
@@ -1731,31 +1907,31 @@ Response Keys: order_id, status
                   <button>语音</button>
                 </div>
                 <div className="side-card">
-                  <div className="icon">API</div>
+                  <IslandIcon type="api" label="接口能力" />
                   <div><strong>AI Test Agent</strong><span>接口测试用例生成与自动执行</span></div>
                 </div>
                 <div className="side-card muted">
-                  <div className="icon">CI</div>
+                  <IslandIcon type="ci" label="工程展示" />
                   <div><strong>工程展示</strong><span>pytest、报告、GitHub Actions</span></div>
                 </div>
                 <div className="dock-title">成果与状态</div>
                 <div className="side-card">
-                  <div className="icon">{execution ? execution.total : cases.length}</div>
-                  <div><strong>测试资产</strong><span>用例、脚本、HTML 报告</span></div>
+                  <IslandIcon type="asset" label="测试资产" />
+                  <div><strong>测试资产</strong><span>{execution ? execution.total : cases.length} 项用例、脚本、HTML 报告</span></div>
                 </div>
                 <div className="side-card muted">
-                  <div className="icon">{endpoints.length}</div>
-                  <div><strong>上下文</strong><span>需求文档与接口契约</span></div>
+                  <IslandIcon type="context" label="上下文" />
+                  <div><strong>上下文</strong><span>{endpoints.length} 个接口契约与需求文档</span></div>
                 </div>
                 <div className="side-card muted">
-                  <div className="icon">{statusLabels[status] || status}</div>
-                  <div><strong>任务</strong><span>运行状态看板</span></div>
+                  <IslandIcon type="task" label="任务状态" />
+                  <div><strong>任务</strong><span>{statusLabels[status] || status}，运行状态看板</span></div>
                 </div>
               </aside>
 
               <main className="workbench">
                 <div className="work-heading">
-                  <div className="work-avatar">AI</div>
+                  <IslandIcon type="agent" label="AI 测试工作流" large />
                   <div>
                     <p>AI 测试工作流</p>
                     <h1>编程</h1>
@@ -2039,7 +2215,7 @@ Response Keys: order_id, status
                 </div>
                 <div className="asset-card feature">
                   <div>
-                    <div className="asset-icon">AT</div>
+                    <IslandIcon type="asset" label="资产" large />
                     <h3>{reportUrl ? "已有可用资产" : "还没有可用资产"}</h3>
                     <p>{reportUrl ? "报告已生成，可以打开查看或继续修改需求重新运行。" : "先生成测试报告，完成后会自动归档到这里。"}</p>
                     <div className="hero-actions">
