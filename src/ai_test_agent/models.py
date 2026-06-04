@@ -91,9 +91,26 @@ class ExecutionResult(BaseModel):
     failures: list[ExecutionFailure] = Field(default_factory=list)
 
 
+class BugSummary(BaseModel):
+    id: str
+    title: str
+    severity: RiskLevel = RiskLevel.medium
+    status: str = "待验证"
+    source: str = "AI Test Agent"
+    related_case: str = ""
+    reproduction_steps: list[str] = Field(default_factory=list)
+    expected_result: str = ""
+    actual_result: str = ""
+    recommendation: str = ""
+
+
 class PipelineResult(BaseModel):
     suite: GeneratedSuite
     test_file: str
     markdown_report: str
     html_report: str
     execution: ExecutionResult | None = None
+    bug_summaries: list[BugSummary] = Field(default_factory=list)
+    bug_summary_file: str = ""
+    mindmap_file: str = ""
+    xmind_file: str = ""

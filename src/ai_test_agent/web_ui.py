@@ -1501,6 +1501,128 @@ WEB_UI_HTML = r"""<!doctype html>
       line-height: 1.5;
       white-space: pre-wrap;
     }
+    .bug-summary-list {
+      display: grid;
+      gap: 10px;
+    }
+    .bug-summary-card {
+      padding: 12px;
+      border: 1px solid rgba(119, 100, 72, 0.12);
+      border-left: 5px solid #e8bf4f;
+      border-radius: 16px;
+      background: rgba(255, 253, 244, 0.74);
+      box-shadow: 0 3px 0 rgba(119, 100, 72, 0.06);
+    }
+    .bug-summary-card.high {
+      border-left-color: #ef7770;
+      background: rgba(255, 225, 220, 0.48);
+    }
+    .bug-summary-card.medium {
+      border-left-color: #e8bf4f;
+      background: rgba(255, 248, 214, 0.5);
+    }
+    .bug-summary-card.low {
+      border-left-color: #43c8bf;
+      background: rgba(216, 246, 237, 0.48);
+    }
+    .bug-summary-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .bug-summary-head strong {
+      display: block;
+      color: #4b4031;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .bug-summary-card p {
+      margin: 6px 0 0;
+      color: #7b715d;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .bug-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .bug-meta span {
+      min-height: 26px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(255, 253, 244, 0.78);
+      color: #786c59;
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .bug-severity {
+      min-width: 54px;
+      min-height: 27px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .bug-severity.high { background: #ffe1dc; color: #b0493c; }
+    .bug-severity.medium { background: #fff0ba; color: #9a6a0c; }
+    .bug-severity.low { background: #d8f6ed; color: #168a7d; }
+    .mindmap-preview {
+      min-height: 300px;
+      padding: 16px;
+      overflow: auto;
+      border: 1px solid rgba(119, 100, 72, 0.12);
+      border-radius: 18px;
+      background:
+        linear-gradient(90deg, rgba(67, 200, 191, 0.13) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(67, 200, 191, 0.11) 1px, transparent 1px),
+        rgba(255, 253, 244, 0.72);
+      background-size: 34px 34px;
+    }
+    .mindmap-tree {
+      display: grid;
+      gap: 12px;
+    }
+    .mindmap-root {
+      width: max-content;
+      max-width: 100%;
+      padding: 10px 14px;
+      border: 3px solid rgba(255,253,244,0.98);
+      border-radius: 999px;
+      background: linear-gradient(135deg, #28164f, #5c2d8b 62%, #ffd24a);
+      color: #fff8dc;
+      font-weight: 900;
+      box-shadow: 0 5px 0 rgba(66, 35, 106, 0.22);
+    }
+    .mindmap-branches {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .mindmap-branch {
+      padding: 12px;
+      border: 1px solid rgba(119, 100, 72, 0.12);
+      border-radius: 16px;
+      background: rgba(255, 253, 244, 0.82);
+    }
+    .mindmap-branch strong {
+      color: #2d8f80;
+      font-size: 13px;
+    }
+    .mindmap-branch ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+      color: #756b58;
+      font-size: 12px;
+      line-height: 1.65;
+    }
     .execution-log {
       max-height: 280px;
       margin: 0;
@@ -1752,6 +1874,7 @@ WEB_UI_HTML = r"""<!doctype html>
       .hero-main { padding: 20px; }
       .metric-grid, .signal-grid { grid-template-columns: 1fr 1fr; }
       .artifact-grid { grid-template-columns: 1fr; }
+      .mindmap-branches { grid-template-columns: 1fr; }
       .test-point { grid-template-columns: 34px minmax(0, 1fr); }
       .test-point .risk-badge { grid-column: 2; justify-self: start; }
       textarea { min-height: 320px; }
@@ -2064,6 +2187,10 @@ Response Keys: order_id, status
       const testFileUrl = result?.test_file ? artifactUrl(result.test_file) : "";
       const markdownReportUrl = result?.markdown_report ? artifactUrl(result.markdown_report) : "";
       const junitUrl = execution?.junit_xml ? artifactUrl(execution.junit_xml) : "";
+      const bugSummaries = result?.bug_summaries || [];
+      const bugSummaryUrl = result?.bug_summary_file ? artifactUrl(result.bug_summary_file) : "";
+      const mindmapUrl = result?.mindmap_file ? artifactUrl(result.mindmap_file) : "";
+      const xmindUrl = result?.xmind_file ? artifactUrl(result.xmind_file) : "";
       const riskLabels = { low: "低风险", medium: "中风险", high: "高风险" };
       const categoryLabels = { positive: "正向", boundary: "边界", negative: "异常", security: "安全" };
       const highRiskPoints = testPoints.filter((point) => point.risk_level === "high").length;
@@ -2112,7 +2239,7 @@ Response Keys: order_id, status
                 <div className="dock-title">成果与状态</div>
                 <div className="side-card">
                   <IslandIcon type="asset" label="测试资产" />
-                  <div><strong>测试资产</strong><span>{execution ? execution.total : cases.length} 项用例、脚本、HTML 报告</span></div>
+                  <div><strong>测试资产</strong><span>{execution ? execution.total : cases.length} 项用例、Bug 摘要、脑图和报告</span></div>
                 </div>
                 <div className="side-card muted">
                   <IslandIcon type="context" label="上下文" />
@@ -2218,14 +2345,16 @@ Response Keys: order_id, status
                       <Metric label="接口" value={endpoints.length} />
                       <Metric label="测试点" value={testPoints.length} />
                       <Metric label="用例" value={cases.length} />
+                      <Metric label="Bug/风险" value={bugSummaries.length} />
                       <Metric label="通过率" value={passRate} />
-                      <Metric label="报告" value={reportUrl ? 1 : 0} />
                     </div>
 
                     <div className="platform-tabs">
                       <button className={`platform-tab ${activeResultTab === "points" ? "active" : ""}`} onClick={() => setActiveResultTab("points")}>AI 测试点 {testPoints.length}</button>
                       <button className={`platform-tab ${activeResultTab === "cases" ? "active" : ""}`} onClick={() => setActiveResultTab("cases")}>测试用例 {cases.length}</button>
                       <button className={`platform-tab ${activeResultTab === "contracts" ? "active" : ""}`} onClick={() => setActiveResultTab("contracts")}>接口契约 {endpoints.length}</button>
+                      <button className={`platform-tab ${activeResultTab === "bugs" ? "active" : ""}`} onClick={() => setActiveResultTab("bugs")}>Bug 摘要 {bugSummaries.length}</button>
+                      <button className={`platform-tab ${activeResultTab === "mindmap" ? "active" : ""}`} onClick={() => setActiveResultTab("mindmap")}>测试脑图 {mindmapUrl ? 1 : 0}</button>
                       <button className={`platform-tab ${activeResultTab === "execution" ? "active" : ""}`} onClick={() => setActiveResultTab("execution")}>执行记录 {execution ? 1 : 0}</button>
                       <button className={`platform-tab ${activeResultTab === "report" ? "active" : ""}`} onClick={() => setActiveResultTab("report")}>测试报告 {reportUrl ? 1 : 0}</button>
                     </div>
@@ -2320,6 +2449,84 @@ Response Keys: order_id, status
                       </div>
                     )}
 
+                    {activeResultTab === "bugs" && (
+                      <div className="tab-pane">
+                        <div className="pane-heading">
+                          <div>
+                            <h3>疑似 Bug 与风险摘要</h3>
+                            <p>执行失败会生成疑似 Bug；全部通过时保留高风险测试关注项，方便复盘和面试展示。</p>
+                          </div>
+                          <div className="console-toolbar">
+                            {bugSummaryUrl && <a className="artifact-link" href={bugSummaryUrl} download>下载 Bug JSON</a>}
+                            {xmindUrl && <a className="artifact-link primary" href={xmindUrl} download>下载 XMind</a>}
+                          </div>
+                        </div>
+                        {bugSummaries.length === 0 ? (
+                          <div className="empty">运行 Agent 后，这里会生成疑似 Bug 或风险关注列表。</div>
+                        ) : (
+                          <div className="bug-summary-list">
+                            {bugSummaries.map((item) => (
+                              <div className={`bug-summary-card ${item.severity}`} key={item.id}>
+                                <div className="bug-summary-head">
+                                  <strong>{item.id} · {item.title}</strong>
+                                  <span className={`bug-severity ${item.severity}`}>{riskLabels[item.severity] || item.severity}</span>
+                                </div>
+                                <p>{item.actual_result}</p>
+                                <p>{item.recommendation}</p>
+                                <div className="bug-meta">
+                                  <span>状态：{item.status}</span>
+                                  <span>来源：{item.source}</span>
+                                  <span>关联：{item.related_case || "-"}</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {activeResultTab === "mindmap" && (
+                      <div className="tab-pane">
+                        <div className="pane-heading">
+                          <div>
+                            <h3>测试脑图导出</h3>
+                            <p>把接口契约、测试点、用例、疑似 Bug 和报告状态组织成可下载脑图。</p>
+                          </div>
+                          <div className="console-toolbar">
+                            {mindmapUrl && <a className="artifact-link" href={mindmapUrl} download>下载脑图 MD</a>}
+                            {xmindUrl && <a className="artifact-link primary" href={xmindUrl} download>下载 XMind</a>}
+                          </div>
+                        </div>
+                        {!result ? (
+                          <div className="empty">运行 Agent 后，这里会展示测试资产脑图。</div>
+                        ) : (
+                          <div className="mindmap-preview">
+                            <div className="mindmap-tree">
+                              <div className="mindmap-root">{projectName || "演示 API"} 测试脑图</div>
+                              <div className="mindmap-branches">
+                                <div className="mindmap-branch">
+                                  <strong>接口契约</strong>
+                                  <ul>{endpoints.slice(0, 6).map((item, index) => <li key={`${item.path}-${index}`}>{item.method} {item.path}</li>)}</ul>
+                                </div>
+                                <div className="mindmap-branch">
+                                  <strong>测试点</strong>
+                                  <ul>{testPoints.slice(0, 6).map((item) => <li key={item.id}>{item.feature} · {riskLabels[item.risk_level] || item.risk_level}</li>)}</ul>
+                                </div>
+                                <div className="mindmap-branch">
+                                  <strong>测试用例</strong>
+                                  <ul>{cases.slice(0, 6).map((item) => <li key={item.id}>{item.id} · {categoryLabels[item.category] || item.category}</li>)}</ul>
+                                </div>
+                                <div className="mindmap-branch">
+                                  <strong>Bug 与风险</strong>
+                                  <ul>{bugSummaries.slice(0, 6).map((item) => <li key={item.id}>{item.id} · {item.title}</li>)}</ul>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {activeResultTab === "execution" && (
                       <div className="tab-pane">
                         <div className="pane-heading">
@@ -2376,6 +2583,9 @@ Response Keys: order_id, status
                               <a className="artifact-link" href={markdownReportUrl} download>下载 Markdown 报告</a>
                               <a className="artifact-link" href={suiteUrl} download>下载 suite.json</a>
                               <a className="artifact-link" href={testFileUrl} download>下载 pytest 脚本</a>
+                              {bugSummaryUrl && <a className="artifact-link" href={bugSummaryUrl} download>下载 Bug 摘要</a>}
+                              {mindmapUrl && <a className="artifact-link" href={mindmapUrl} download>下载脑图 MD</a>}
+                              {xmindUrl && <a className="artifact-link primary" href={xmindUrl} download>下载 XMind</a>}
                             </div>
                           </>
                         ) : (
@@ -2390,7 +2600,7 @@ Response Keys: order_id, status
 
               <aside className="asset-dock">
                 <div className="asset-tabs">
-                  <span className="active">资产 {cases.length}</span>
+                  <span className="active">资产 {cases.length + bugSummaries.length}</span>
                   <span>上下文 {endpoints.length}</span>
                   <span>变更 0</span>
                   <span>任务 {status === "IDLE" ? 0 : 1}</span>
@@ -2401,7 +2611,7 @@ Response Keys: order_id, status
                 </div>
                 <div className="asset-card">
                   <h3>资产码头</h3>
-                  <p>输出资产会在这里汇总：接口契约、测试用例、pytest 脚本和 HTML 报告。</p>
+                  <p>输出资产会在这里汇总：接口契约、测试用例、Bug 摘要、测试脑图和 HTML 报告。</p>
                 </div>
                 <div className="asset-metrics">
                   <div>{endpoints.length}<span>接口</span></div>
@@ -2425,7 +2635,7 @@ Response Keys: order_id, status
                 </div>
                 <div className={`insight-box ${execution?.success ? "pass" : ""}`}>
                   <h3>AI 风险雷达</h3>
-                  <p>{result ? `识别 ${testPoints.length} 个测试点，其中 ${highRiskPoints} 个高风险关注点；当前执行失败 ${failures.length} 项。` : "运行 Agent 后，这里会汇总需求风险和执行失败。"}</p>
+                  <p>{result ? `识别 ${testPoints.length} 个测试点，其中 ${highRiskPoints} 个高风险关注点；生成 ${bugSummaries.length} 条 Bug/风险摘要。` : "运行 Agent 后，这里会汇总需求风险和执行失败。"}</p>
                 </div>
                 {result && (
                   <div className="asset-card">
@@ -2435,6 +2645,9 @@ Response Keys: order_id, status
                       <a className="artifact-link" href={testFileUrl} download>pytest 脚本</a>
                       <a className="artifact-link" href={markdownReportUrl} download>Markdown</a>
                       <a className="artifact-link primary" href={reportUrl} download>HTML 报告</a>
+                      {bugSummaryUrl && <a className="artifact-link" href={bugSummaryUrl} download>Bug 摘要</a>}
+                      {mindmapUrl && <a className="artifact-link" href={mindmapUrl} download>脑图 MD</a>}
+                      {xmindUrl && <a className="artifact-link primary" href={xmindUrl} download>XMind</a>}
                     </div>
                   </div>
                 )}

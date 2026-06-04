@@ -21,4 +21,6 @@ def test_web_ui_homepage_loads():
     assert response.status_code == 200
     assert "AI Test Agent" in response.text
     assert "运行 Agent" in response.text
+    assert "Bug 摘要" in response.text
+    assert "测试脑图" in response.text
     assert 'fetch("/run"' in response.text

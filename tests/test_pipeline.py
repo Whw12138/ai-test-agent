@@ -17,6 +17,9 @@ def test_pipeline_generates_executes_and_reports(tmp_path):
     assert Path(result.test_file).exists()
     assert Path(result.markdown_report).exists()
     assert Path(result.html_report).exists()
+    assert Path(result.bug_summary_file).exists()
+    assert Path(result.mindmap_file).exists()
+    assert Path(result.xmind_file).exists()
     assert result.execution is not None
     assert result.execution.success is True
     assert result.execution.total == 8

@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from ai_test_agent.agents import PytestCodeAgent, RequirementAnalysisAgent, TestCaseDesignAgent
+from ai_test_agent.assets import QualityAssetBuilder
 from ai_test_agent.config import settings
 from ai_test_agent.models import AnalysisResult, GeneratedSuite, PipelineResult
 from ai_test_agent.openapi import OpenAPIAnalysisAgent
@@ -21,12 +22,14 @@ class AITestAgentPipeline:
         code_agent: PytestCodeAgent | None = None,
         runner: PytestRunner | None = None,
         reporter: ReportGenerator | None = None,
+        asset_builder: QualityAssetBuilder | None = None,
     ) -> None:
         self.analyzer = analyzer or RequirementAnalysisAgent()
         self.case_designer = case_designer or TestCaseDesignAgent()
         self.code_agent = code_agent or PytestCodeAgent()
         self.runner = runner or PytestRunner()
         self.reporter = reporter or ReportGenerator()
+        self.asset_builder = asset_builder or QualityAssetBuilder()
 
     def run(
         self,
@@ -63,8 +66,9 @@ class AITestAgentPipeline:
         suite_file.write_text(json.dumps(suite.model_dump(mode="json"), indent=2), encoding="utf-8")
 
         execution = self.runner.run(test_file, project_root) if execute else None
-        markdown_report = self.reporter.markdown(suite, execution)
-        html_report = self.reporter.html(markdown_report, suite=suite, execution=execution)
+        bug_summaries = self.asset_builder.build_bug_summaries(suite, execution)
+        markdown_report = self.reporter.markdown(suite, execution, bug_summaries=bug_summaries)
+        html_report = self.reporter.html(markdown_report, suite=suite, execution=execution, bug_summaries=bug_summaries)
 
         report_dir = output / "reports"
         report_dir.mkdir(parents=True, exist_ok=True)
@@ -73,12 +77,31 @@ class AITestAgentPipeline:
         markdown_path.write_text(markdown_report, encoding="utf-8")
         html_path.write_text(html_report, encoding="utf-8")
 
+        asset_dir = output / "assets"
+        asset_dir.mkdir(parents=True, exist_ok=True)
+        bug_summary_path = asset_dir / "bug_summary.json"
+        mindmap_path = asset_dir / "test_mindmap.md"
+        xmind_path = asset_dir / "test_mindmap.xmind"
+        bug_summary_path.write_text(
+            json.dumps([item.model_dump(mode="json") for item in bug_summaries], ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        mindmap_path.write_text(
+            self.asset_builder.render_mindmap_markdown(suite, execution, bug_summaries),
+            encoding="utf-8",
+        )
+        self.asset_builder.write_xmind(xmind_path, suite, execution, bug_summaries)
+
         return PipelineResult(
             suite=suite,
             test_file=str(test_file),
             markdown_report=str(markdown_path),
             html_report=str(html_path),
             execution=execution,
+            bug_summaries=bug_summaries,
+            bug_summary_file=str(bug_summary_path),
+            mindmap_file=str(mindmap_path),
+            xmind_file=str(xmind_path),
         )
 
     def analyze_input(

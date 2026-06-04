@@ -5,7 +5,7 @@ from __future__ import annotations
 import html
 
 from ai_test_agent.agents import render_suite_as_markdown
-from ai_test_agent.models import ExecutionResult, GeneratedSuite, TestCase, TestPoint
+from ai_test_agent.models import BugSummary, ExecutionResult, GeneratedSuite, TestCase, TestPoint
 
 
 STATUS_LABELS = {
@@ -40,8 +40,16 @@ def _localized_summary(summary: str) -> str:
 
 
 class ReportGenerator:
-    def markdown(self, suite: GeneratedSuite, execution: ExecutionResult | None) -> str:
-        content = [render_suite_as_markdown(suite), "## 执行结果", ""]
+    def markdown(
+        self,
+        suite: GeneratedSuite,
+        execution: ExecutionResult | None,
+        bug_summaries: list[BugSummary] | None = None,
+    ) -> str:
+        content = [render_suite_as_markdown(suite)]
+        if bug_summaries:
+            content.extend(self._bug_summary_markdown(bug_summaries))
+        content.extend(["## 执行结果", ""])
         if execution is None:
             content.append("测试已生成，但未执行。")
             return "\n".join(content).rstrip() + "\n"
@@ -83,6 +91,7 @@ class ReportGenerator:
         markdown_report: str,
         suite: GeneratedSuite | None = None,
         execution: ExecutionResult | None = None,
+        bug_summaries: list[BugSummary] | None = None,
     ) -> str:
         if suite is None:
             return self._plain_html(markdown_report)
@@ -114,6 +123,7 @@ class ReportGenerator:
             f"      <div class=\"status {status_class}\">{status_label}</div>\n"
             "    </section>\n"
             f"{self._metrics(execution, suite)}"
+            f"{self._bug_summary_section(bug_summaries or [])}"
             "    <section>\n"
             "      <h2>测试点</h2>\n"
             f"{self._test_points_table(suite.analysis.test_points)}"
@@ -171,6 +181,10 @@ class ReportGenerator:
             "    .pass { background: #dcfce7; color: #166534; }\n"
             "    .fail { background: #fee2e2; color: #991b1b; }\n"
             "    .neutral { background: #e5e7eb; color: #374151; }\n"
+            "    .severity { display: inline-block; min-width: 48px; border-radius: 999px; padding: 4px 8px; text-align: center; font-weight: 700; font-size: 12px; }\n"
+            "    .severity.low { background: #dcfce7; color: #166534; }\n"
+            "    .severity.medium { background: #fef3c7; color: #92400e; }\n"
+            "    .severity.high { background: #fee2e2; color: #991b1b; }\n"
             "    .metrics { display: grid; grid-template-columns: repeat(5, minmax(120px, 1fr)); gap: 12px; }\n"
             "    .metric { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 16px; }\n"
             "    .metric span { display: block; color: var(--muted); font-size: 12px; }\n"
@@ -224,6 +238,44 @@ class ReportGenerator:
             for case in cases
         ]
         return "<table><thead><tr><th>ID</th><th>类别</th><th>优先级</th><th>请求</th><th>预期状态</th></tr></thead><tbody>" + "".join(rows) + "</tbody></table>\n"
+
+    def _bug_summary_markdown(self, summaries: list[BugSummary]) -> list[str]:
+        lines = [
+            "## 疑似 Bug 与风险摘要",
+            "",
+            "| ID | 标题 | 严重级别 | 状态 | 关联用例 | 建议 |",
+            "| --- | --- | --- | --- | --- | --- |",
+        ]
+        for item in summaries:
+            severity = RISK_LABELS.get(item.severity.value, item.severity.value)
+            lines.append(
+                f"| {item.id} | {item.title} | {severity} | {item.status} | {item.related_case or '-'} | {item.recommendation} |"
+            )
+        lines.append("")
+        return lines
+
+    def _bug_summary_section(self, summaries: list[BugSummary]) -> str:
+        if not summaries:
+            return ""
+        rows = "".join(
+            "<tr>"
+            f"<td>{html.escape(item.id)}</td>"
+            f"<td>{html.escape(item.title)}</td>"
+            f"<td><span class=\"severity {html.escape(item.severity.value)}\">{html.escape(RISK_LABELS.get(item.severity.value, item.severity.value))}</span></td>"
+            f"<td>{html.escape(item.status)}</td>"
+            f"<td>{html.escape(item.related_case or '-')}</td>"
+            f"<td>{html.escape(item.recommendation)}</td>"
+            "</tr>"
+            for item in summaries
+        )
+        return (
+            "    <section>\n"
+            "      <h2>疑似 Bug 与风险摘要</h2>\n"
+            "      <table><thead><tr><th>ID</th><th>标题</th><th>严重级别</th><th>状态</th><th>关联用例</th><th>建议</th></tr></thead><tbody>"
+            f"{rows}"
+            "</tbody></table>\n"
+            "    </section>\n"
+        )
 
     def _failure_section(self, execution: ExecutionResult | None) -> str:
         if execution is None or not execution.failures:

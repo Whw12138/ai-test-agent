@@ -66,6 +66,9 @@ def main() -> None:
     print(f"Test file: {result.test_file}")
     print(f"Markdown report: {result.markdown_report}")
     print(f"HTML report: {result.html_report}")
+    print(f"Bug summary: {result.bug_summary_file}")
+    print(f"Mindmap markdown: {result.mindmap_file}")
+    print(f"XMind file: {result.xmind_file}")
 
 
 if __name__ == "__main__":
