@@ -668,6 +668,38 @@ WEB_UI_HTML = r"""<!doctype html>
       font-size: 12px;
       font-weight: 900;
     }
+    .tiny-avatar.cat-avatar {
+      width: 38px;
+      height: 38px;
+      margin: -5px 0;
+      background: transparent;
+      color: transparent;
+      overflow: visible;
+    }
+    .cat-avatar img,
+    .cat-sticker {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      filter: drop-shadow(0 2px 0 rgba(91, 70, 43, 0.18));
+    }
+    .cat-avatar img {
+      transform: rotate(-2deg);
+    }
+    .cat-sticker {
+      position: relative;
+      z-index: 1;
+      flex: 0 0 auto;
+      width: 28px;
+      height: 28px;
+    }
+    .cat-sticker.large {
+      width: 58px;
+      height: 58px;
+      margin: -4px 0;
+    }
     .model-stack {
       display: flex;
       align-items: center;
@@ -1795,6 +1827,67 @@ WEB_UI_HTML = r"""<!doctype html>
       position: relative;
       z-index: 1;
     }
+    .with-cat {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .primary-button.with-cat,
+    .mini-action.with-cat,
+    .artifact-link.with-cat {
+      padding-left: 8px;
+    }
+    .artifact-link.with-cat {
+      gap: 6px;
+    }
+    .primary-button.with-cat .cat-sticker {
+      width: 30px;
+      height: 30px;
+      margin-left: -2px;
+    }
+    .mini-action.with-cat .cat-sticker,
+    .artifact-link.with-cat .cat-sticker {
+      width: 24px;
+      height: 24px;
+    }
+    .artifact-link.with-cat:not(.primary) {
+      padding-left: 8px;
+    }
+    .mini-action.with-cat:not(.active)::before,
+    .artifact-link.with-cat:not(.primary)::before {
+      display: none;
+    }
+    .artifact-grid .artifact-link.with-cat {
+      padding-left: 8px;
+    }
+    .artifact-grid .artifact-link.with-cat .cat-sticker {
+      width: 20px;
+      height: 20px;
+    }
+    .cat-task {
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr);
+      align-items: center;
+      column-gap: 10px;
+      min-height: 94px;
+    }
+    .cat-task .cat-sticker {
+      width: 46px;
+      height: 46px;
+      transform: rotate(-2deg);
+    }
+    .cat-task .task-copy {
+      display: block;
+      min-width: 0;
+    }
+    .cat-task .task-copy strong,
+    .cat-task .task-copy span {
+      display: block;
+    }
+    .cat-task:not(.primary-task) .cat-sticker {
+      filter: drop-shadow(0 3px 0 rgba(49, 151, 137, 0.12));
+    }
     .ability-tabs button.active,
     .mimo-tab.active,
     .platform-tab.active {
@@ -2067,6 +2160,16 @@ Response Keys: order_id, status
       return "";
     }
 
+    const CAT_ASSETS = {
+      title: "/static/island-cat/title-cat.png",
+      run: "/static/island-cat/cat-run.png",
+      contract: "/static/island-cat/cat-contract.png",
+      requirement: "/static/island-cat/cat-requirement.png",
+      report: "/static/island-cat/cat-report.png",
+      assets: "/static/island-cat/cat-assets.png",
+      empty: "/static/island-cat/cat-empty.png",
+    };
+
     function Metric({ label, value }) {
       return (
         <div className="metric">
@@ -2078,6 +2181,10 @@ Response Keys: order_id, status
 
     function IslandIcon({ type, label, large = false }) {
       return <span className={`island-icon ${type} ${large ? "large" : ""}`} role="img" aria-label={label}><span></span></span>;
+    }
+
+    function CatSticker({ name, label, large = false }) {
+      return <img className={`cat-sticker ${large ? "large" : ""}`} src={CAT_ASSETS[name]} alt={label || ""} aria-hidden={label ? undefined : "true"} />;
     }
 
     function App() {
@@ -2202,7 +2309,7 @@ Response Keys: order_id, status
             <header className="desktop-topbar">
               <div className="traffic" aria-hidden="true"><span></span><span></span><span></span></div>
               <div className="top-chip">
-                <span className="tiny-avatar">AT</span>
+                <span className="tiny-avatar cat-avatar"><img src={CAT_ASSETS.title} alt="猫猫 Agent 头像" /></span>
                 <strong>AI Test Agent</strong>
                 <em>本地项目执行</em>
               </div>
@@ -2253,7 +2360,7 @@ Response Keys: order_id, status
 
               <main className="workbench">
                 <div className="work-heading">
-                  <IslandIcon type="agent" label="AI 测试工作流" large />
+                  <CatSticker name="title" large />
                   <div>
                     <p>AI 测试工作流</p>
                     <h1>编程</h1>
@@ -2276,29 +2383,42 @@ Response Keys: order_id, status
                 </div>
 
                 <div className="task-grid">
-                  <button className="task-card primary-task" onClick={runAgent} disabled={running || text.trim().length === 0}>
-                    <strong>{running ? "运行中..." : "运行 Agent"}</strong>
-                    <span>从需求到报告，一次跑完整闭环。</span>
+                  <button className="task-card primary-task cat-task" onClick={runAgent} disabled={running || text.trim().length === 0}>
+                    <CatSticker name={running ? "empty" : "run"} />
+                    <span className="task-copy">
+                      <strong>{running ? "运行中..." : "运行 Agent"}</strong>
+                      <span>从需求到报告，一次跑完整闭环。</span>
+                    </span>
                   </button>
-                  <button className="task-card" onClick={loadOpenApi}>
-                    <strong>读取接口契约</strong>
-                    <span>载入 OpenAPI 示例，检查解析和用例生成。</span>
+                  <button className="task-card cat-task" onClick={loadOpenApi}>
+                    <CatSticker name="contract" />
+                    <span className="task-copy">
+                      <strong>读取接口契约</strong>
+                      <span>载入 OpenAPI 示例，检查解析和用例生成。</span>
+                    </span>
                   </button>
-                  <button className="task-card" onClick={loadMarkdown}>
-                    <strong>整理需求</strong>
-                    <span>切回 Markdown 示例，适合面试演示。</span>
+                  <button className="task-card cat-task" onClick={loadMarkdown}>
+                    <CatSticker name="requirement" />
+                    <span className="task-copy">
+                      <strong>整理需求</strong>
+                      <span>切回 Markdown 示例，适合面试演示。</span>
+                    </span>
                   </button>
-                  <button className="task-card" onClick={clearAll}>
-                    <strong>重置工作台</strong>
-                    <span>清空输入和运行结果，重新开始。</span>
+                  <button className="task-card cat-task" onClick={clearAll}>
+                    <CatSticker name="empty" />
+                    <span className="task-copy">
+                      <strong>重置工作台</strong>
+                      <span>清空输入和运行结果，重新开始。</span>
+                    </span>
                   </button>
                 </div>
 
                 <section className="draft-card">
                   <div className="draft-head">
                     <div><strong>任务草稿</strong><span> 在当前项目里实现这个测试任务</span></div>
-                    <button className="primary-button" onClick={runAgent} disabled={running || text.trim().length === 0}>
-                      {running ? "运行中..." : "生成报告"}
+                    <button className="primary-button with-cat" onClick={runAgent} disabled={running || text.trim().length === 0}>
+                      <CatSticker name={running ? "empty" : "report"} />
+                      <span>{running ? "运行中..." : "生成报告"}</span>
                     </button>
                   </div>
                   <div className="draft-body">
@@ -2337,7 +2457,12 @@ Response Keys: order_id, status
                     <div><strong>测试管理台</strong><span> {summary}</span></div>
                     <div className="console-toolbar">
                       {suiteUrl && <a className="artifact-link" href={suiteUrl} download>下载 suite.json</a>}
-                      {reportUrl && <a className="artifact-link primary" href={reportPreview} target="_blank" rel="noreferrer">打开 HTML 报告</a>}
+                      {reportUrl && (
+                        <a className="artifact-link primary with-cat" href={reportPreview} target="_blank" rel="noreferrer">
+                          <CatSticker name="report" />
+                          <span>打开 HTML 报告</span>
+                        </a>
+                      )}
                     </div>
                   </div>
                   <div className="console-body">
@@ -2620,12 +2745,18 @@ Response Keys: order_id, status
                 </div>
                 <div className="asset-card feature">
                   <div>
-                    <IslandIcon type="asset" label="资产" large />
+                    <CatSticker name="assets" large />
                     <h3>{reportUrl ? "已有可用资产" : "还没有可用资产"}</h3>
                     <p>{reportUrl ? "报告已生成，可以打开查看或继续修改需求重新运行。" : "先生成测试报告，完成后会自动归档到这里。"}</p>
                     <div className="hero-actions">
-                      <button className="mini-action active" onClick={runAgent} disabled={running || text.trim().length === 0}>生成资产</button>
-                      <button className="mini-action" onClick={loadOpenApi}>分析契约</button>
+                      <button className="mini-action active with-cat" onClick={runAgent} disabled={running || text.trim().length === 0}>
+                        <CatSticker name="assets" />
+                        <span>生成资产</span>
+                      </button>
+                      <button className="mini-action with-cat" onClick={loadOpenApi}>
+                        <CatSticker name="contract" />
+                        <span>分析契约</span>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -2644,10 +2775,10 @@ Response Keys: order_id, status
                       <a className="artifact-link" href={suiteUrl} download>suite.json</a>
                       <a className="artifact-link" href={testFileUrl} download>pytest 脚本</a>
                       <a className="artifact-link" href={markdownReportUrl} download>Markdown</a>
-                      <a className="artifact-link primary" href={reportUrl} download>HTML 报告</a>
-                      {bugSummaryUrl && <a className="artifact-link" href={bugSummaryUrl} download>Bug 摘要</a>}
-                      {mindmapUrl && <a className="artifact-link" href={mindmapUrl} download>脑图 MD</a>}
-                      {xmindUrl && <a className="artifact-link primary" href={xmindUrl} download>XMind</a>}
+                      <a className="artifact-link primary with-cat" href={reportUrl} download><CatSticker name="report" /><span>HTML 报告</span></a>
+                      {bugSummaryUrl && <a className="artifact-link with-cat" href={bugSummaryUrl} download><CatSticker name="report" /><span>Bug 摘要</span></a>}
+                      {mindmapUrl && <a className="artifact-link with-cat" href={mindmapUrl} download><CatSticker name="requirement" /><span>脑图 MD</span></a>}
+                      {xmindUrl && <a className="artifact-link primary with-cat" href={xmindUrl} download><CatSticker name="assets" /><span>XMind</span></a>}
                     </div>
                   </div>
                 )}

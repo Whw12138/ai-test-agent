@@ -23,8 +23,11 @@ app = FastAPI(
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 RUNS_DIR = PROJECT_ROOT / "runs"
+STATIC_DIR = Path(__file__).resolve().parent / "static"
 RUNS_DIR.mkdir(exist_ok=True)
 app.mount("/runs", StaticFiles(directory=RUNS_DIR), name="runs")
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
 class RequirementRequest(BaseModel):

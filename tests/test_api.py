@@ -23,4 +23,13 @@ def test_web_ui_homepage_loads():
     assert "运行 Agent" in response.text
     assert "Bug 摘要" in response.text
     assert "测试脑图" in response.text
+    assert "/static/island-cat/title-cat.png" in response.text
     assert 'fetch("/run"' in response.text
+
+
+def test_static_cat_asset_loads():
+    client = TestClient(app)
+    response = client.get("/static/island-cat/title-cat.png")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/png"
